@@ -2,316 +2,711 @@
 <html lang="pl">
 <head>
 <meta charset="UTF-8">
-<title>OliwierTAS 3D Pickaxe</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>\u26a1 NeonStudio \u2014 Kreator Grafik</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600;700&family=Press+Start+2P&family=Bebas+Neue&family=Righteous&family=Permanent+Marker&family=Russo+One&family=Bungee+Shade&family=Monoton&family=Audiowide&family=Black+Ops+One&family=Exo+2:wght@100;400;900&family=Cinzel:wght@400;900&family=Titan+One&family=Ultra&display=swap" rel="stylesheet">
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: #05000d;
-    overflow: hidden;
-    font-family: 'Segoe UI', sans-serif;
-  }
-  canvas#three { display: block; }
-  #ui {
-    position: fixed;
-    bottom: 28px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    gap: 12px;
-    z-index: 100;
-  }
-  .btn {
-    padding: 8px 20px;
-    background: rgba(120,0,200,0.25);
-    border: 1px solid rgba(200,50,255,0.4);
-    color: rgba(220,150,255,0.85);
-    font-size: 11px;
-    letter-spacing: 2px;
-    cursor: pointer;
-    text-transform: uppercase;
-    transition: all .2s;
-    backdrop-filter: blur(6px);
-  }
-  .btn:hover { background: rgba(180,0,255,0.35); border-color: rgba(255,80,255,0.7); color:#fff; }
-  #watermark {
-    position: fixed;
-    top: 22px; left: 50%;
-    transform: translateX(-50%);
-    font-size: 11px;
-    letter-spacing: 5px;
-    color: rgba(180,60,255,0.35);
-    text-transform: uppercase;
-    pointer-events: none;
-  }
+:root {
+  --bg: #090b14;
+  --panel: #0d1020;
+  --panel2: #111428;
+  --accent: #00f5ff;
+  --accent2: #ff006e;
+  --accent3: #a855f7;
+  --gold: #ffd700;
+  --text: #e0e8ff;
+  --text2: #8892b0;
+  --border: rgba(0,245,255,0.15);
+  --glow: 0 0 20px rgba(0,245,255,0.3);
+  --glow2: 0 0 20px rgba(255,0,110,0.3);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--text);font-family:'Rajdhani',sans-serif;min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+.header{background:linear-gradient(90deg,#090b14,#0d1020,#090b14);border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(20px)}
+.logo{font-family:'Orbitron',sans-serif;font-weight:900;font-size:18px;background:linear-gradient(135deg,#00f5ff,#a855f7,#ff006e);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px}
+.header-btns{display:flex;gap:8px}
+.hbtn{background:rgba(0,245,255,0.1);border:1px solid var(--border);color:var(--accent);padding:6px 12px;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;transition:all 0.2s}
+.hbtn:hover,.hbtn.active{background:rgba(0,245,255,0.2);box-shadow:var(--glow)}
+.hbtn.red{color:var(--accent2);border-color:rgba(255,0,110,0.3)}
+.hbtn.red:hover{background:rgba(255,0,110,0.15);box-shadow:var(--glow2)}
+.hbtn.purple{color:var(--accent3);border-color:rgba(168,85,247,0.3)}
+.hbtn.purple:hover,.hbtn.purple.active{background:rgba(168,85,247,0.15);box-shadow:0 0 20px rgba(168,85,247,0.3)}
+
+/* TABS */
+.tabs{display:flex;gap:0;border-bottom:1px solid var(--border);background:var(--panel);overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:10px 18px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all 0.2s;letter-spacing:1px}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent);background:rgba(0,245,255,0.05)}
+.tab:hover:not(.active){color:var(--text)}
+
+/* LAYOUT */
+.workspace{display:flex;flex-direction:column;height:calc(100vh - 90px)}
+.main-area{display:flex;flex:1;overflow:hidden}
+.sidebar{width:280px;background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;flex-shrink:0;scrollbar-width:thin;scrollbar-color:var(--accent) transparent}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--accent);border-radius:2px}
+.canvas-area{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow:auto;padding:20px;background:repeating-conic-gradient(#0a0d1a 0% 25%,#090b14 0% 50%) 0 0/20px 20px}
+.right-panel{width:260px;background:var(--panel);border-left:1px solid var(--border);overflow-y:auto;flex-shrink:0;scrollbar-width:thin;scrollbar-color:var(--accent3) transparent}
+.right-panel::-webkit-scrollbar{width:4px}
+.right-panel::-webkit-scrollbar-thumb{background:var(--accent3);border-radius:2px}
+
+/* PANELS */
+.panel-section{border-bottom:1px solid var(--border);padding:12px}
+.panel-title{font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.panel-title::before{content:'';width:3px;height:12px;background:var(--accent);border-radius:2px;box-shadow:0 0 8px var(--accent)}
+
+/* CANVAS */
+#mainCanvas{border-radius:4px;box-shadow:0 0 40px rgba(0,0,0,0.8),0 0 80px rgba(0,245,255,0.1);cursor:crosshair;max-width:100%;touch-action:none}
+.canvas-controls{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;justify-content:center}
+.zoom-display{background:rgba(0,245,255,0.1);border:1px solid var(--border);color:var(--accent);padding:4px 10px;border-radius:4px;font-size:12px;font-family:'Orbitron',sans-serif}
+
+/* INPUTS */
+input[type=text],input[type=number],select,textarea{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text);padding:6px 10px;border-radius:6px;font-family:'Rajdhani',sans-serif;font-size:13px;width:100%;outline:none;transition:border 0.2s}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,245,255,0.1)}
+select option{background:#0d1020;color:var(--text)}
+input[type=range]{width:100%;accent-color:var(--accent);height:4px}
+input[type=color]{width:36px;height:36px;border:none;background:none;cursor:pointer;border-radius:6px;padding:0}
+label{font-size:12px;color:var(--text2);margin-bottom:3px;display:block;font-weight:600;letter-spacing:0.5px}
+
+/* BUTTONS */
+.btn{background:linear-gradient(135deg,rgba(0,245,255,0.15),rgba(168,85,247,0.15));border:1px solid var(--border);color:var(--text);padding:8px 14px;border-radius:6px;cursor:pointer;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;transition:all 0.2s;width:100%;margin-bottom:4px;text-align:center}
+.btn:hover{background:linear-gradient(135deg,rgba(0,245,255,0.3),rgba(168,85,247,0.3));box-shadow:0 0 15px rgba(0,245,255,0.2);transform:translateY(-1px)}
+.btn-sm{padding:5px 10px;font-size:11px;width:auto;margin:2px}
+.btn-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.btn-accent{background:linear-gradient(135deg,#00f5ff,#a855f7);color:#000;border:none}
+.btn-accent:hover{opacity:0.9;transform:translateY(-1px)}
+.btn-danger{background:rgba(255,0,110,0.15);border-color:rgba(255,0,110,0.3);color:var(--accent2)}
+.btn-danger:hover{background:rgba(255,0,110,0.3)}
+.btn-gold{background:rgba(255,215,0,0.1);border-color:rgba(255,215,0,0.3);color:var(--gold)}
+.btn-gold:hover{background:rgba(255,215,0,0.2)}
+
+/* FONT PREVIEW */
+.font-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;max-height:200px;overflow-y:auto}
+.font-item{background:rgba(255,255,255,0.04);border:1px solid var(--border);padding:8px;border-radius:4px;cursor:pointer;text-align:center;font-size:16px;transition:all 0.2s}
+.font-item:hover,.font-item.active{border-color:var(--accent);background:rgba(0,245,255,0.08);box-shadow:var(--glow)}
+
+/* LAYER LIST */
+.layer-item{display:flex;align-items:center;gap:8px;padding:8px;background:rgba(255,255,255,0.03);border:1px solid transparent;border-radius:6px;margin-bottom:4px;cursor:pointer;transition:all 0.2s}
+.layer-item:hover,.layer-item.active{border-color:var(--accent3);background:rgba(168,85,247,0.08)}
+.layer-thumb{width:32px;height:32px;border-radius:4px;background:#1a1a2e;border:1px solid var(--border);object-fit:contain}
+.layer-name{flex:1;font-size:12px;font-weight:600}
+.layer-vis{font-size:14px;cursor:pointer;opacity:0.7}
+.layer-vis:hover{opacity:1}
+
+/* COLOR SWATCHES */
+.swatches{display:flex;flex-wrap:wrap;gap:4px}
+.swatch{width:24px;height:24px;border-radius:4px;cursor:pointer;border:2px solid transparent;transition:all 0.15s;flex-shrink:0}
+.swatch:hover,.swatch.active{border-color:#fff;transform:scale(1.2)}
+
+/* GRADIENT BAR */
+.grad-preview{height:24px;border-radius:4px;border:1px solid var(--border);margin:6px 0;cursor:pointer}
+.grad-stops{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.grad-stop{width:28px;height:28px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all 0.15s}
+.grad-stop.active{border-color:#fff;transform:scale(1.15)}
+
+/* TOOLS */
+.tool-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.tool-btn{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:var(--text2);padding:10px 4px;border-radius:6px;cursor:pointer;font-size:18px;text-align:center;transition:all 0.2s;position:relative}
+.tool-btn:hover,.tool-btn.active{background:rgba(0,245,255,0.12);border-color:var(--accent);color:var(--accent);box-shadow:var(--glow)}
+.tool-btn span{display:block;font-size:9px;font-weight:700;letter-spacing:0.5px;margin-top:2px;font-family:'Rajdhani',sans-serif}
+
+/* AI PANEL */
+.ai-box{background:linear-gradient(135deg,rgba(168,85,247,0.1),rgba(0,245,255,0.05));border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:12px;margin-bottom:8px}
+.ai-thinking{display:none;align-items:center;gap:8px;color:var(--accent3);font-size:12px}
+.ai-thinking.show{display:flex}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--accent3);animation:pulse 0.8s ease-in-out infinite}
+.ai-dot:nth-child(2){animation-delay:0.2s}
+.ai-dot:nth-child(3){animation-delay:0.4s}
+@keyframes pulse{0%,100%{opacity:0.3;transform:scale(0.8)}50%{opacity:1;transform:scale(1.2)}}
+.ai-response{background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:6px;padding:10px;margin-top:8px;font-size:12px;line-height:1.6;display:none}
+.ai-response.show{display:block}
+
+/* 3D PANEL */
+.effect-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.effect-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text2);padding:10px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;text-align:center;transition:all 0.2s;letter-spacing:0.5px}
+.effect-btn:hover{border-color:var(--accent2);color:var(--accent2);background:rgba(255,0,110,0.08)}
+.effect-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,0.08)}
+
+/* TEXTURE SECTION */
+.texture-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.tex-item{border-radius:6px;overflow:hidden;cursor:pointer;border:2px solid transparent;aspect-ratio:1;transition:all 0.2s}
+.tex-item:hover,.tex-item.active{border-color:var(--accent);transform:scale(1.05)}
+.tex-canvas{width:100%;height:100%}
+
+/* STATUS BAR */
+.statusbar{background:var(--panel);border-top:1px solid var(--border);padding:5px 16px;display:flex;gap:20px;font-size:11px;color:var(--text2);font-family:'Orbitron',sans-serif}
+.status-item{display:flex;align-items:center;gap:4px}
+.status-dot{width:5px;height:5px;border-radius:50%;background:var(--accent);box-shadow:0 0 6px var(--accent)}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.modal-box{background:var(--panel2);border:1px solid var(--border);border-radius:12px;padding:24px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto}
+.modal-title{font-family:'Orbitron',sans-serif;font-size:14px;color:var(--accent);margin-bottom:16px;letter-spacing:2px}
+
+/* NOTIFICATIONS */
+.notif{position:fixed;top:80px;right:16px;z-index:200;display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.notif-item{background:rgba(13,16,32,0.95);border:1px solid var(--accent);border-radius:8px;padding:10px 16px;font-size:12px;font-weight:600;color:var(--accent);transform:translateX(120%);transition:transform 0.3s;box-shadow:var(--glow);pointer-events:auto}
+.notif-item.show{transform:translateX(0)}
+.notif-item.err{border-color:var(--accent2);color:var(--accent2);box-shadow:var(--glow2)}
+.notif-item.ok{border-color:#00ff88;color:#00ff88;box-shadow:0 0 20px rgba(0,255,136,0.3)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .sidebar,.right-panel{display:none;position:fixed;z-index:50;height:100%;top:0;bottom:0}
+  .sidebar{left:0;width:85vw}
+  .sidebar.open{display:block}
+  .right-panel{right:0;width:85vw}
+  .right-panel.open{display:block}
+  .canvas-area{padding:10px}
+  .main-area{position:relative}
+  .mobile-overlay{display:none;position:fixed;inset:0;z-index:40;background:rgba(0,0,0,0.5)}
+  .mobile-overlay.show{display:block}
+  .mob-btns{display:flex!important;gap:8px}
+}
+.mob-btns{display:none}
+
+/* SCROLLBAR GLOBAL */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-thumb{background:rgba(0,245,255,0.3);border-radius:2px}
+
+/* ROW HELPERS */
+.row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.row label{margin:0;white-space:nowrap;min-width:70px}
+.gap4{gap:4px}
+.mt8{margin-top:8px}
+.mb8{margin-bottom:8px}
+.flex1{flex:1}
+.w50{width:50%}
+
+/* NUMBER SPINNER */
+.spinner{display:flex;align-items:center;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.spinner input{border:none;background:none;text-align:center;width:60px;padding:5px}
+.spinner button{background:none;border:none;color:var(--text2);padding:5px 10px;cursor:pointer;font-size:16px;transition:color 0.15s}
+.spinner button:hover{color:var(--accent)}
+
+/* TOGGLE */
+.toggle{display:flex;align-items:center;gap:8px;cursor:pointer}
+.toggle-track{width:36px;height:20px;background:rgba(255,255,255,0.1);border-radius:10px;position:relative;transition:background 0.2s;border:1px solid var(--border)}
+.toggle-thumb{width:14px;height:14px;background:#fff;border-radius:50%;position:absolute;top:2px;left:2px;transition:left 0.2s}
+.toggle.on .toggle-track{background:rgba(0,245,255,0.3);border-color:var(--accent)}
+.toggle.on .toggle-thumb{left:18px}
+.toggle span{font-size:12px;color:var(--text2)}
+
+/* PRESETS */
+.preset-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:4px}
+.preset-card{border-radius:8px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all 0.2s;aspect-ratio:16/9;position:relative}
+.preset-card:hover{border-color:var(--accent);transform:scale(1.03)}
+.preset-card canvas{width:100%;height:100%}
+.preset-card span{position:absolute;bottom:4px;left:0;right:0;text-align:center;font-size:9px;font-weight:700;color:#fff;text-shadow:0 1px 3px #000}
+
+/* HISTORY */
+.history-list{display:flex;flex-direction:column;gap:3px;max-height:120px;overflow-y:auto}
+.hist-item{font-size:11px;color:var(--text2);padding:4px 8px;border-radius:4px;cursor:pointer;transition:background 0.15s}
+.hist-item:hover{background:rgba(255,255,255,0.05);color:var(--text)}
+.hist-item.current{color:var(--accent);font-weight:700}
+
+/* BLEND MODES */
+.blend-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
+.blend-btn{background:rgba(255,255,255,0.03);border:1px solid var(--border);color:var(--text2);padding:5px;border-radius:4px;cursor:pointer;font-size:10px;font-weight:700;text-align:center;transition:all 0.15s}
+.blend-btn.active{border-color:var(--accent3);color:var(--accent3);background:rgba(168,85,247,0.1)}
+.blend-btn:hover{border-color:var(--text2)}
+
+/* EXPORT FORMAT */
+.fmt-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.fmt-btn{background:rgba(255,255,255,0.04);border:1px solid var(--border);color:var(--text2);padding:8px 4px;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;text-align:center;transition:all 0.2s;letter-spacing:0.5px}
+.fmt-btn:hover,.fmt-btn.active{border-color:var(--gold);color:var(--gold);background:rgba(255,215,0,0.08)}
+
+/* ANIM */
+@keyframes scanline{0%{transform:translateY(-100%)}100%{transform:translateY(100vh)}}
+.scanline{position:fixed;top:0;left:0;right:0;height:2px;background:linear-gradient(transparent,rgba(0,245,255,0.08),transparent);animation:scanline 4s linear infinite;pointer-events:none;z-index:99}
 </style>
 </head>
 <body>
-<div id="watermark">OliwierTAS &nbsp;\u00b7&nbsp; BoxPvP</div>
-<canvas id="three"></canvas>
-<div id="ui">
-  <button class="btn" id="btnSpin">\u27f3 Auto Spin</button>
-  <button class="btn" id="btnReset">\u21ba Reset</button>
+<div class="scanline"></div>
+<div class="notif" id="notif"></div>
+<div class="mobile-overlay" id="mobileOverlay" onclick="closeAllPanels()"></div>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">\u26a1 NEON<span style="color:#ff006e">STUDIO</span></div>
+  <div style="display:flex;gap:6px;align-items:center">
+    <div class="mob-btns">
+      <button class="hbtn" onclick="toggleSidebar()">\u2630</button>
+      <button class="hbtn red" onclick="toggleRightPanel()">\u2699</button>
+    </div>
+    <button class="hbtn" onclick="undo()" title="Cofnij (Ctrl+Z)">\u21a9</button>
+    <button class="hbtn" onclick="redo()" title="Pon\u00f3w">\u21aa</button>
+    <button class="hbtn red" id="btnExport" onclick="openExportModal()">\ud83d\udce4 EKSPORT</button>
+    <button class="hbtn purple" onclick="openAIModal()">\ud83e\udd16 AI</button>
+  </div>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script>
-// \u2500\u2500\u2500 SCENE SETUP \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const W = window.innerWidth, H = window.innerHeight;
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('three'), antialias: true, alpha: true });
-renderer.setSize(W, H);
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
-renderer.shadowMap.enabled = true;
-renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.2;
+<!-- TABS -->
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('text',this)">\u270f\ufe0f TEKST</div>
+  <div class="tab" onclick="switchTab('draw',this)">\ud83d\udd8c\ufe0f RYSOWANIE</div>
+  <div class="tab" onclick="switchTab('fx',this)">\u2728 EFEKTY 3D</div>
+  <div class="tab" onclick="switchTab('texture',this)">\ud83c\udfa8 TEKSTURY</div>
+  <div class="tab" onclick="switchTab('layers',this)">\ud83d\udcda WARSTWY</div>
+  <div class="tab" onclick="switchTab('presets',this)">\ud83c\udfaf PRESETY</div>
+  <div class="tab" onclick="switchTab('export',this)">\ud83d\udcbe EKSPORT</div>
+</div>
 
-const scene = new THREE.Scene();
-const camera = new THREE.PerspectiveCamera(45, W/H, 0.01, 100);
-camera.position.set(0, 1.2, 7);
-camera.lookAt(0, 0, 0);
+<!-- WORKSPACE -->
+<div class="workspace">
+<div class="main-area">
 
-// \u2500\u2500\u2500 BACKGROUND GRADIENT via CSS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-document.body.style.background = 'radial-gradient(ellipse at 40% 40%, #1a0030 0%, #0a0018 50%, #03000a 100%)';
+<!-- LEFT SIDEBAR -->
+<div class="sidebar" id="sidebar">
 
-// \u2500\u2500\u2500 LIGHTS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const ambLight = new THREE.AmbientLight(0x220033, 1.8);
-scene.add(ambLight);
+  <!-- TAB: TEKST -->
+  <div id="tab-text">
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udcdd TRE\u015a\u0106 NAPISU</div>
+      <textarea id="textInput" rows="2" placeholder="Wpisz tekst..." style="resize:vertical">NEON STUDIO</textarea>
+      <div class="mt8 row">
+        <label>Rozmiar</label>
+        <div class="spinner flex1">
+          <button onclick="changeFontSize(-2)">\u2212</button>
+          <input type="number" id="fontSize" value="80" min="8" max="500" oninput="updateCanvas()">
+          <button onclick="changeFontSize(2)">+</button>
+        </div>
+      </div>
+    </div>
 
-const mainLight = new THREE.DirectionalLight(0xdd66ff, 3.5);
-mainLight.position.set(4, 6, 5);
-mainLight.castShadow = true;
-scene.add(mainLight);
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udd24 CZCIONKA</div>
+      <input type="text" id="fontSearch" placeholder="Szukaj czcionki..." oninput="filterFonts()" class="mb8">
+      <div class="font-grid" id="fontGrid"></div>
+    </div>
 
-const fillLight = new THREE.DirectionalLight(0xff00aa, 1.8);
-fillLight.position.set(-4, 2, 3);
-scene.add(fillLight);
+    <div class="panel-section">
+      <div class="panel-title">\ud83c\udfa8 KOLOR TEKSTU</div>
+      <div class="row">
+        <input type="color" id="textColor" value="#00f5ff" onchange="updateCanvas()">
+        <input type="text" id="textColorHex" value="#00f5ff" oninput="syncColor('textColor','textColorHex')" style="flex:1">
+      </div>
+      <div class="swatches mt8" id="textSwatches"></div>
+    </div>
 
-const rimLight = new THREE.DirectionalLight(0x8800ff, 2.2);
-rimLight.position.set(0, -3, -5);
-scene.add(rimLight);
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udcd0 POZYCJA & STYL</div>
+      <div class="row">
+        <label>Wyr\u00f3w.</label>
+        <div class="btn-grid flex1">
+          <button class="btn btn-sm" onclick="setAlign('left')" title="Do lewej">\u2b05</button>
+          <button class="btn btn-sm" onclick="setAlign('center')" title="\u015arodek">\u2b1b</button>
+          <button class="btn btn-sm" onclick="setAlign('right')" title="Do prawej">\u27a1</button>
+          <button class="btn btn-sm" onclick="setAlign('fill')" title="Wype\u0142nij">\u2b0c</button>
+        </div>
+      </div>
+      <div class="row mt8">
+        <label>Pogrub.</label>
+        <button class="btn btn-sm flex1" id="boldBtn" onclick="toggleBold()"><b>B</b></button>
+        <label style="min-width:auto">Italic</label>
+        <button class="btn btn-sm flex1" id="italicBtn" onclick="toggleItalic()"><i>I</i></button>
+      </div>
+      <div class="row mt8">
+        <label>Odst\u0119p</label>
+        <input type="range" id="letterSpacing" min="-20" max="100" value="0" oninput="updateCanvas()" class="flex1">
+        <span id="lsVal" style="font-size:11px;min-width:30px;text-align:right">0</span>
+      </div>
+      <div class="row mt8">
+        <label>Linia</label>
+        <input type="range" id="lineHeight" min="0.5" max="3" step="0.05" value="1.2" oninput="updateCanvas()" class="flex1">
+        <span id="lhVal" style="font-size:11px;min-width:30px;text-align:right">1.2</span>
+      </div>
+      <div class="row mt8">
+        <label>K\u0105t</label>
+        <input type="range" id="textAngle" min="-180" max="180" value="0" oninput="updateCanvas()" class="flex1">
+        <span id="angleVal" style="font-size:11px;min-width:30px;text-align:right">0\u00b0</span>
+      </div>
+      <div class="row mt8">
+        <label>Opac.</label>
+        <input type="range" id="textOpacity" min="0" max="1" step="0.01" value="1" oninput="updateCanvas()" class="flex1">
+        <span id="opacVal" style="font-size:11px;min-width:30px;text-align:right">100%</span>
+      </div>
+    </div>
 
-const pointGlow = new THREE.PointLight(0xff00cc, 4, 8);
-pointGlow.position.set(-1, 1, 3);
-scene.add(pointGlow);
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udca1 KONTUR TEKSTU</div>
+      <div class="row">
+        <label class="toggle" id="strokeToggle" onclick="toggleFeature('stroke')">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          <span>Kontur</span>
+        </label>
+      </div>
+      <div id="strokeOpts">
+        <div class="row mt8">
+          <input type="color" id="strokeColor" value="#ff006e" onchange="updateCanvas()">
+          <input type="text" id="strokeColorHex" value="#ff006e" oninput="syncColor('strokeColor','strokeColorHex')" style="flex:1">
+        </div>
+        <div class="row mt8">
+          <label>Grub.</label>
+          <input type="range" id="strokeWidth" min="0" max="30" value="3" oninput="updateCanvas()" class="flex1">
+          <span id="swVal" style="font-size:11px;min-width:30px;text-align:right">3</span>
+        </div>
+      </div>
+    </div>
 
-// \u2500\u2500\u2500 MATERIALS \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function metalMat(color, emissive = 0x000000, roughness = 0.18, metalness = 0.85) {
-  return new THREE.MeshStandardMaterial({
-    color, emissive, emissiveIntensity: 0.35,
-    roughness, metalness,
-    envMapIntensity: 1.2
-  });
-}
+  </div>
 
-// Gradient g\u0142\u00f3wny fiolet\u2192magenta przez VertexColors
-function gradientMat() {
-  return new THREE.MeshStandardMaterial({
-    vertexColors: true,
-    roughness: 0.15,
-    metalness: 0.9,
-    envMapIntensity: 1.5,
-  });
-}
+  <!-- TAB: RYSOWANIE -->
+  <div id="tab-draw" style="display:none">
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udd8c\ufe0f NARZ\u0118DZIA</div>
+      <div class="tool-grid">
+        <div class="tool-btn active" id="tool-pen" onclick="setTool('pen')">\u270f\ufe0f<span>PI\u00d3RO</span></div>
+        <div class="tool-btn" id="tool-brush" onclick="setTool('brush')">\ud83d\udd8c\ufe0f<span>P\u0118DZEL</span></div>
+        <div class="tool-btn" id="tool-eraser" onclick="setTool('eraser')">\ud83e\uddf9<span>GUMKA</span></div>
+        <div class="tool-btn" id="tool-fill" onclick="setTool('fill')">\ud83e\udea3<span>WYPE\u0141N</span></div>
+        <div class="tool-btn" id="tool-rect" onclick="setTool('rect')">\u2b1c<span>RECT</span></div>
+        <div class="tool-btn" id="tool-circle" onclick="setTool('circle')">\u2b55<span>OKR\u0104G</span></div>
+        <div class="tool-btn" id="tool-line" onclick="setTool('line')">\ud83d\udccf<span>LINIA</span></div>
+        <div class="tool-btn" id="tool-spray" onclick="setTool('spray')">\ud83d\udca8<span>SPRAY</span></div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83c\udfa8 KOLOR NARZ\u0118DZIA</div>
+      <div class="row">
+        <input type="color" id="drawColor" value="#00f5ff" onchange="updateDrawColor()">
+        <input type="text" id="drawColorHex" value="#00f5ff" oninput="syncColor('drawColor','drawColorHex');updateDrawColor()" style="flex:1">
+      </div>
+      <div class="swatches mt8" id="drawSwatches"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\u2699\ufe0f USTAWIENIA</div>
+      <div class="row">
+        <label>Rozmiar</label>
+        <input type="range" id="brushSize" min="1" max="100" value="15" oninput="updateBrushPreview()" class="flex1">
+        <span id="bsVal" style="font-size:11px;min-width:30px;text-align:right">15px</span>
+      </div>
+      <div class="row mt8">
+        <label>Twardo\u015b\u0107</label>
+        <input type="range" id="brushHardness" min="0" max="100" value="80" oninput="" class="flex1">
+        <span id="bhVal" style="font-size:11px;min-width:30px;text-align:right">80%</span>
+      </div>
+      <div class="row mt8">
+        <label>Opac.</label>
+        <input type="range" id="drawOpacity" min="0.01" max="1" step="0.01" value="1" oninput="" class="flex1">
+        <span id="doVal" style="font-size:11px;min-width:30px;text-align:right">100%</span>
+      </div>
+      <div class="row mt8">
+        <label>Blend</label>
+        <select id="drawBlend" onchange="" style="flex:1">
+          <option value="source-over">Normal</option>
+          <option value="multiply">Multiply</option>
+          <option value="screen">Screen</option>
+          <option value="overlay">Overlay</option>
+          <option value="hard-light">Hard Light</option>
+          <option value="color-dodge">Color Dodge</option>
+          <option value="color-burn">Color Burn</option>
+          <option value="difference">Difference</option>
+          <option value="exclusion">Exclusion</option>
+          <option value="hue">Hue</option>
+          <option value="saturation">Saturation</option>
+          <option value="luminosity">Luminosity</option>
+        </select>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\uddbc\ufe0f T\u0141O</div>
+      <div class="btn btn-sm" onclick="clearDrawLayer()">\ud83d\uddd1\ufe0f Wyczy\u015b\u0107 warstw\u0119</div>
+    </div>
+  </div>
 
-// Maluje wierzcho\u0142ki gradientem
-function paintGradient(geo, colorA, colorB, axis = 'y') {
-  const positions = geo.attributes.position;
-  const colors = [];
-  const cA = new THREE.Color(colorA);
-  const cB = new THREE.Color(colorB);
+  <!-- TAB: EFEKTY 3D -->
+  <div id="tab-fx" style="display:none">
+    <div class="panel-section">
+      <div class="panel-title">\u2728 EFEKTY TEKSTU</div>
+      <div class="effect-grid">
+        <div class="effect-btn" onclick="applyEffect('neon')" id="fx-neon">\ud83c\udf1f NEON</div>
+        <div class="effect-btn" onclick="applyEffect('shadow3d')" id="fx-shadow3d">\ud83d\udce6 3D CIE\u0143</div>
+        <div class="effect-btn" onclick="applyEffect('outline3d')" id="fx-outline3d">\ud83d\udd32 3D KONTUR</div>
+        <div class="effect-btn" onclick="applyEffect('emboss')" id="fx-emboss">\u2b06\ufe0f EMBOSS</div>
+        <div class="effect-btn" onclick="applyEffect('chrome')" id="fx-chrome">\u2728 CHROME</div>
+        <div class="effect-btn" onclick="applyEffect('fire')" id="fx-fire">\ud83d\udd25 OGIE\u0143</div>
+        <div class="effect-btn" onclick="applyEffect('ice')" id="fx-ice">\u2744\ufe0f L\u00d3D</div>
+        <div class="effect-btn" onclick="applyEffect('glitch')" id="fx-glitch">\ud83d\udce1 GLITCH</div>
+        <div class="effect-btn" onclick="applyEffect('retro')" id="fx-retro">\ud83d\udcfa RETRO</div>
+        <div class="effect-btn" onclick="applyEffect('metallic')" id="fx-metallic">\ud83d\udd27 METAL</div>
+        <div class="effect-btn" onclick="applyEffect('rainbow')" id="fx-rainbow">\ud83c\udf08 T\u0118CZA</div>
+        <div class="effect-btn" onclick="applyEffect('none')" id="fx-none">\ud83d\udeab BRAK</div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udce6 CIE\u0143 3D</div>
+      <div class="row">
+        <label>X offset</label>
+        <input type="range" id="shadow3dX" min="-30" max="30" value="5" oninput="updateCanvas()" class="flex1">
+        <span id="s3xVal" style="font-size:11px;min-width:30px;text-align:right">5</span>
+      </div>
+      <div class="row mt8">
+        <label>Y offset</label>
+        <input type="range" id="shadow3dY" min="-30" max="30" value="5" oninput="updateCanvas()" class="flex1">
+        <span id="s3yVal" style="font-size:11px;min-width:30px;text-align:right">5</span>
+      </div>
+      <div class="row mt8">
+        <label>G\u0142\u0119b.</label>
+        <input type="range" id="shadow3dDepth" min="0" max="30" value="8" oninput="updateCanvas()" class="flex1">
+        <span id="s3dVal" style="font-size:11px;min-width:30px;text-align:right">8</span>
+      </div>
+      <div class="row mt8">
+        <input type="color" id="shadow3dColor" value="#000088" onchange="updateCanvas()">
+        <label class="flex1">Kolor cienia 3D</label>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udca1 DROP SHADOW</div>
+      <div class="row">
+        <label class="toggle" id="dropShadowToggle" onclick="toggleFeature('dropShadow')">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          <span>Drop Shadow</span>
+        </label>
+      </div>
+      <div id="dropShadowOpts">
+        <div class="row mt8">
+          <label>X</label>
+          <input type="range" id="dsx" min="-50" max="50" value="4" oninput="updateCanvas()" class="flex1">
+          <span id="dsxVal" style="font-size:11px;min-width:30px;text-align:right">4</span>
+        </div>
+        <div class="row mt8">
+          <label>Y</label>
+          <input type="range" id="dsy" min="-50" max="50" value="4" oninput="updateCanvas()" class="flex1">
+          <span id="dsyVal" style="font-size:11px;min-width:30px;text-align:right">4</span>
+        </div>
+        <div class="row mt8">
+          <label>Blur</label>
+          <input type="range" id="dsblur" min="0" max="50" value="8" oninput="updateCanvas()" class="flex1">
+          <span id="dsbVal" style="font-size:11px;min-width:30px;text-align:right">8</span>
+        </div>
+        <div class="row mt8">
+          <input type="color" id="dsColor" value="#000000" onchange="updateCanvas()">
+          <label class="flex1">Kolor</label>
+        </div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83c\udf1f PO\u015aWIATA</div>
+      <div class="row">
+        <label class="toggle" id="glowToggle" onclick="toggleFeature('glow')">
+          <div class="toggle-track"><div class="toggle-thumb"></div></div>
+          <span>Outer Glow</span>
+        </label>
+      </div>
+      <div id="glowOpts">
+        <div class="row mt8">
+          <input type="color" id="glowColor" value="#00f5ff" onchange="updateCanvas()">
+          <label class="flex1">Kolor glow</label>
+        </div>
+        <div class="row mt8">
+          <label>Rozmiar</label>
+          <input type="range" id="glowSize" min="0" max="60" value="20" oninput="updateCanvas()" class="flex1">
+          <span id="gsVal" style="font-size:11px;min-width:30px;text-align:right">20</span>
+        </div>
+        <div class="row mt8">
+          <label>Intens.</label>
+          <input type="range" id="glowIntensity" min="1" max="10" value="3" oninput="updateCanvas()" class="flex1">
+          <span id="giVal" style="font-size:11px;min-width:30px;text-align:right">3</span>
+        </div>
+      </div>
+    </div>
+  </div>
 
-  // znajd\u017a min/max na osi
-  let min = Infinity, max = -Infinity;
-  for (let i = 0; i < positions.count; i++) {
-    const v = axis === 'x' ? positions.getX(i) : axis === 'y' ? positions.getY(i) : positions.getZ(i);
-    min = Math.min(min, v); max = Math.max(max, v);
-  }
-  for (let i = 0; i < positions.count; i++) {
-    const v = axis === 'x' ? positions.getX(i) : axis === 'y' ? positions.getY(i) : positions.getZ(i);
-    const t = (v - min) / (max - min + 0.0001);
-    const c = cA.clone().lerp(cB, t);
-    colors.push(c.r, c.g, c.b);
-  }
-  geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-}
+  <!-- TAB: TEKSTURY -->
+  <div id="tab-texture" style="display:none">
+    <div class="panel-section">
+      <div class="panel-title">\ud83c\udfa8 T\u0141O</div>
+      <div class="btn-grid">
+        <button class="btn btn-sm" onclick="setBg('solid')">Jednolite</button>
+        <button class="btn btn-sm" onclick="setBg('gradient')">Gradient</button>
+        <button class="btn btn-sm" onclick="setBg('mesh')">Mesh Gradient</button>
+        <button class="btn btn-sm" onclick="setBg('noise')">Szum</button>
+        <button class="btn btn-sm" onclick="setBg('pattern')">Wz\u00f3r</button>
+        <button class="btn btn-sm" onclick="setBg('transparent')">Prze\u017arocz.</button>
+      </div>
+      <div id="bgSolidOpts" class="mt8">
+        <div class="row">
+          <input type="color" id="bgColor" value="#090b14" onchange="updateCanvas()">
+          <input type="text" id="bgColorHex" value="#090b14" oninput="syncColor('bgColor','bgColorHex')" style="flex:1">
+        </div>
+        <div class="swatches mt8" id="bgSwatches"></div>
+      </div>
+      <div id="bgGradientOpts" style="display:none" class="mt8">
+        <select id="gradType" onchange="updateCanvas()" class="mb8">
+          <option value="linear">Liniowy</option>
+          <option value="radial">Radialny</option>
+          <option value="conic">Sto\u017ckowy</option>
+          <option value="diagonal">Diagonalny</option>
+        </select>
+        <div class="row">
+          <label>K\u0105t</label>
+          <input type="range" id="gradAngle" min="0" max="360" value="135" oninput="updateCanvas()" class="flex1">
+          <span id="gaVal" style="font-size:11px;min-width:35px;text-align:right">135\u00b0</span>
+        </div>
+        <div style="margin-top:8px">
+          <label>Kolor 1</label>
+          <div class="row">
+            <input type="color" id="grad1" value="#090b14" onchange="updateCanvas()">
+            <input type="text" id="grad1hex" value="#090b14" oninput="syncColor('grad1','grad1hex')" style="flex:1">
+          </div>
+          <label class="mt8">Kolor 2</label>
+          <div class="row">
+            <input type="color" id="grad2" value="#1a0533" onchange="updateCanvas()">
+            <input type="text" id="grad2hex" value="#1a0533" oninput="syncColor('grad2','grad2hex')" style="flex:1">
+          </div>
+          <label class="mt8">Kolor 3 (opcjonalny)</label>
+          <div class="row">
+            <input type="color" id="grad3" value="#001a33" onchange="updateCanvas()">
+            <input type="text" id="grad3hex" value="#001a33" oninput="syncColor('grad3','grad3hex')" style="flex:1">
+          </div>
+        </div>
+      </div>
+      <div id="bgPatternOpts" style="display:none" class="mt8">
+        <select id="patternType" onchange="updateCanvas()">
+          <option value="grid">Siatka</option>
+          <option value="dots">Kropki</option>
+          <option value="hexagon">Hexagony</option>
+          <option value="diagonal_lines">Linie uko\u015bne</option>
+          <option value="circuit">Obw\u00f3d</option>
+          <option value="crosshatch">Kratkowanie</option>
+        </select>
+        <div class="row mt8">
+          <label>Rozmiar</label>
+          <input type="range" id="patternSize" min="5" max="80" value="20" oninput="updateCanvas()" class="flex1">
+          <span id="psVal" style="font-size:11px;min-width:30px;text-align:right">20</span>
+        </div>
+        <div class="row mt8">
+          <input type="color" id="patternColor" value="#1a2040" onchange="updateCanvas()">
+          <label class="flex1">Kolor wzoru</label>
+        </div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udccf ROZMIAR P\u0141\u00d3TNA</div>
+      <div class="row">
+        <label>Szer.</label>
+        <input type="number" id="canvasW" value="512" min="16" max="4096" onchange="resizeCanvas()" style="flex:1">
+        <label>Wys.</label>
+        <input type="number" id="canvasH" value="512" min="16" max="4096" onchange="resizeCanvas()" style="flex:1">
+      </div>
+      <div class="btn-grid mt8">
+        <button class="btn btn-sm" onclick="setCanvasSize(512,512)">512\u00d7512</button>
+        <button class="btn btn-sm" onclick="setCanvasSize(1024,512)">1024\u00d7512</button>
+        <button class="btn btn-sm" onclick="setCanvasSize(256,256)">256\u00d7256</button>
+        <button class="btn btn-sm" onclick="setCanvasSize(800,200)">800\u00d7200</button>
+        <button class="btn btn-sm" onclick="setCanvasSize(1920,1080)">1920\u00d71080</button>
+        <button class="btn btn-sm" onclick="setCanvasSize(480,480)">480\u00d7480</button>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\uddbc\ufe0f OBRAZ T\u0141A</div>
+      <label class="btn" for="bgImageInput" style="cursor:pointer">\ud83d\udcc1 Wgraj obraz</label>
+      <input type="file" id="bgImageInput" accept="image/*" style="display:none" onchange="loadBgImage(event)">
+      <div class="row mt8">
+        <label>Dopas.</label>
+        <select id="bgFit" onchange="updateCanvas()" style="flex:1">
+          <option value="cover">Cover</option>
+          <option value="contain">Contain</option>
+          <option value="fill">Stretch</option>
+          <option value="tile">Tile</option>
+        </select>
+      </div>
+      <div class="row mt8">
+        <label>Opac.</label>
+        <input type="range" id="bgOpacity" min="0" max="1" step="0.01" value="1" oninput="updateCanvas()" class="flex1">
+        <span id="bgoVal" style="font-size:11px;min-width:30px;text-align:right">100%</span>
+      </div>
+    </div>
+  </div>
 
-const matHead = gradientMat();
-const matStick = new THREE.MeshStandardMaterial({
-  color: 0x2a0845, roughness: 0.4, metalness: 0.6,
-  emissive: 0x110022, emissiveIntensity: 0.2
-});
-const matEdge = new THREE.MeshStandardMaterial({
-  color: 0xff00cc, emissive: 0xff00cc, emissiveIntensity: 0.6,
-  roughness: 0.05, metalness: 1.0
-});
+  <!-- TAB: WARSTWY (in sidebar) -->
+  <div id="tab-layers" style="display:none">
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udcda WARSTWY</div>
+      <div class="btn-grid mb8">
+        <button class="btn btn-sm" onclick="addTextLayer()">+ Tekst</button>
+        <button class="btn btn-sm" onclick="addShapeLayer()">+ Kszta\u0142t</button>
+      </div>
+      <div id="layerList"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udd00 BLEND MODE</div>
+      <div class="blend-grid" id="blendModes"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udcdc HISTORIA</div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
 
-// \u2500\u2500\u2500 PICKAXE GROUP \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const pickaxe = new THREE.Group();
-scene.add(pickaxe);
+  <!-- TAB: PRESETY -->
+  <div id="tab-presets" style="display:none">
+    <div class="panel-section">
+      <div class="panel-title">\ud83c\udfaf SZYBKIE PRESETY</div>
+      <div class="preset-grid" id="presetGrid"></div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udcbe ZAPISZ PRESET</div>
+      <input type="text" id="presetName" placeholder="Nazwa presetu..." class="mb8">
+      <button class="btn btn-accent" onclick="savePreset()">\ud83d\udcbe Zapisz</button>
+    </div>
+  </div>
 
-// Skalowanie ca\u0142o\u015bci \u2014 1 jednostka = ~wygodny rozmiar
-const S = 1.0;
+  <!-- TAB: EKSPORT (sidebar) -->
+  <div id="tab-export" style="display:none">
+    <div class="panel-section">
+      <div class="panel-title">\ud83d\udcbe FORMAT</div>
+      <div class="fmt-grid">
+        <div class="fmt-btn active" id="fmt-png" onclick="setFmt('png',this)">PNG</div>
+        <div class="fmt-btn" id="fmt-jpg" onclick="setFmt('jpg',this)">JPG</div>
+        <div class="fmt-btn" id="fmt-webp" onclick="setFmt('webp',this)">WEBP</div>
+        <div class="fmt-btn" id="fmt-json" onclick="setFmt('json',this)">JSON</div>
+      </div>
+    </div>
+    <div class="panel-section">
+      <div class="panel-title">\u2699\ufe0f OPCJE</div>
+      <div id="qualityOpts">
+        <div class="row">
+          <label>Jako\u015b\u0107</label>
+          <input type="range" id="exportQuality" min="0.1" max="1" step="0.05" value="0.95" class="flex1">
+          <span id="eqVal" style="font-size:11px;min-width:35px;text-align:right">95%</span>
+        </div>
+      </div>
+      <div class="row mt8">
+        <label>Skala</label>
+        <select id="exportScale" style="flex:1">
+          <option value="1">1x (oryginalny)</option>
+          <option value="2">2x (Retina)</option>
+          <option value="0.5">0.5x (po\u0142owa)</option>
+        </select>
+      </div>
+    </div>
+    <div class="panel-section">
+      <button class="btn btn-accent" onclick="exportImage()">\ud83d\udce4 Eksportuj obraz</button>
+      <button class="btn btn-gold" onclick="exportJSON()">\ud83d\udccb Eksportuj JSON</button>
+      <button class="btn" onclick="exportLayersJSON()">\ud83d\udce6 Eksportuj warstwy</button>
+      <button class="btn" onclick="importJSON()">\ud83d\udce5 Importuj JSON</button>
+      <input type="file" id="importJSONInput" accept=".json" style="display:none" onchange="handleJSONImport(event)">
+    </div>
+  </div>
 
-// \u2500\u2500 HELPER: box z gradientem \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function makeBox(w, h, d, cx, cy, cz, colorA, colorB, gradAxis = 'x') {
-  const geo = new THREE.BoxGeometry(w, h, d, 2, 2, 2);
-  paintGradient(geo, colorA, colorB, gradAxis);
-  const mesh = new THREE.Mesh(geo, gradientMat());
-  mesh.position.set(cx, cy, cz);
-  mesh.castShadow = true;
-  mesh.receiveShadow = true;
-  pickaxe.add(mesh);
-  return mesh;
-}
+</div><!-- /sidebar -->
 
-// \u2500\u2500\u2500 G\u0141OWICA (HEAD) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-// Minecraft pickaxe head: poziomy prostok\u0105t z 2 z\u0119bami na g\u00f3rze
-// Korpus: szeroki poziomo, cienki pionowo
-const HEAD_W = 3.2 * S;
-const HEAD_H = 0.7 * S;
-const HEAD_D = 0.55 * S;
-const HEAD_Y = 0.8 * S;
-const HEAD_X = -0.3 * S; // lekko przesuni\u0119ty w lewo wzgl\u0119dem trzonka
-
-// Korpus g\u0142\u00f3wny g\u0142owicy
-makeBox(HEAD_W, HEAD_H, HEAD_D,  HEAD_X, HEAD_Y, 0,  0xcc00ff, 0xff00aa, 'x');
-
-// Lewy z\u0105b (g\u00f3rny)
-makeBox(0.65*S, 0.75*S, HEAD_D,  HEAD_X - 1.05*S, HEAD_Y + 0.72*S, 0,  0xee44ff, 0xbb00dd, 'y');
-
-// Prawy z\u0105b (g\u00f3rny)
-makeBox(0.65*S, 0.75*S, HEAD_D,  HEAD_X + 0.75*S, HEAD_Y + 0.72*S, 0,  0xdd00ff, 0xff00cc, 'y');
-
-// Lewy koniec g\u0142owicy (ostry, troch\u0119 d\u0142u\u017cszy w d\u00f3\u0142)
-makeBox(0.5*S, 0.55*S, HEAD_D,  HEAD_X - 1.55*S, HEAD_Y - 0.25*S, 0,  0xaa00ee, 0x880099, 'y');
-
-// Prawy koniec g\u0142owicy
-makeBox(0.45*S, 0.55*S, HEAD_D,  HEAD_X + 1.3*S, HEAD_Y - 0.25*S, 0,  0xcc00ff, 0x9900bb, 'y');
-
-// \u2500\u2500 Edge glow strip na kraw\u0119dziach ostrzy \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-function makeEdge(w, h, d, x, y, z) {
-  const g = new THREE.BoxGeometry(w, h, d);
-  const m = new THREE.Mesh(g, matEdge);
-  m.position.set(x, y, z);
-  pickaxe.add(m);
-}
-// kraw\u0119d\u017a lewa ostrze
-makeEdge(0.04, 0.75*S, HEAD_D+0.02,  HEAD_X - 1.38*S, HEAD_Y + 0.72*S, 0);
-// kraw\u0119d\u017a prawa ostrze
-makeEdge(0.04, 0.75*S, HEAD_D+0.02,  HEAD_X + 1.08*S, HEAD_Y + 0.72*S, 0);
-// kraw\u0119d\u017a g\u00f3rna korpusu
-makeEdge(HEAD_W+0.02, 0.04, HEAD_D+0.02,  HEAD_X, HEAD_Y + HEAD_H/2, 0);
-// kraw\u0119d\u017a dolna korpusu
-makeEdge(HEAD_W+0.02, 0.04, HEAD_D+0.02,  HEAD_X, HEAD_Y - HEAD_H/2, 0);
-
-// \u2500\u2500\u2500 TRZONEK (HANDLE) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-// Obr\u00f3cony pod k\u0105tem -45\u00b0 (diagonal jak w MC)
-const STICK_LEN = 3.8 * S;
-const STICK_W   = 0.32 * S;
-
-const stickGeo = new THREE.BoxGeometry(STICK_W, STICK_LEN, STICK_W);
-const stickMesh = new THREE.Mesh(stickGeo, matStick);
-// Obr\u00f3\u0107 -45\u00b0 i przesu\u0144 tak \u017ceby \u0142\u0105czy\u0142 si\u0119 z g\u0142owic\u0105
-stickMesh.rotation.z = Math.PI / 4; // 45\u00b0
-stickMesh.position.set(0.85*S, -0.55*S, 0);
-stickMesh.castShadow = true;
-pickaxe.add(stickMesh);
-
-// Koniec trzonka - ma\u0142y blok
-const endGeo = new THREE.BoxGeometry(0.38*S, 0.38*S, 0.38*S);
-const endMesh = new THREE.Mesh(endGeo, new THREE.MeshStandardMaterial({
-  color: 0x1a0030, roughness: 0.5, metalness: 0.7
-}));
-endMesh.position.set(
-  0.85*S + Math.sin(Math.PI/4)*(STICK_LEN/2 - 0.15),
-  -0.55*S - Math.cos(Math.PI/4)*(STICK_LEN/2 - 0.15),
-  0
-);
-pickaxe.add(endMesh);
-
-// \u2500\u2500\u2500 NAPIS "OLIWIERTAS" NA G\u0141OWICY \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-// Generujemy przez Canvas2D i mapujemy jako texture na p\u0142aski quad
-
-function makeTextSprite(text) {
-  const canvas = document.createElement('canvas');
-  canvas.width = 512; canvas.height = 128;
-  const ctx = canvas.getContext('2d');
-
-  // T\u0142o transparentne
-  ctx.clearRect(0, 0, 512, 128);
-
-  // Gradient tekstu
-  const grad = ctx.createLinearGradient(0, 0, 512, 0);
-  grad.addColorStop(0,   '#ffffff');
-  grad.addColorStop(0.3, '#ffaaff');
-  grad.addColorStop(0.6, '#ffffff');
-  grad.addColorStop(1,   '#eeaaff');
-
-  // Cie\u0144 / glow
-  ctx.shadowColor = '#cc00ff';
-  ctx.shadowBlur = 18;
-
-  ctx.font = 'bold 72px "Arial Black", Impact, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-
-  // Outline czarny
-  ctx.strokeStyle = 'rgba(0,0,0,0.85)';
-  ctx.lineWidth = 10;
-  ctx.strokeText(text, 256, 64);
-
-  // Fill gradient
-  ctx.fillStyle = grad;
-  ctx.fillText(text, 256, 64);
-
-  const tex = new THREE.CanvasTexture(canvas);
-  tex.needsUpdate = true;
-
-  const geo = new THREE.PlaneGeometry(HEAD_W * 0.95, 0.45 * S);
-  const mat = new THREE.MeshBasicMaterial({
-    map: tex, transparent: true, depthWrite: false, side: THREE.DoubleSide
-  });
-  const mesh = new THREE.Mesh(geo, mat);
-  // Umieszcz NA g\u0142owicy \u2014 lekko przed ni\u0105 (z+)
-  mesh.position.set(HEAD_X, HEAD_Y, HEAD_D/2 + 0.02);
-  return mesh;
-}
-
-const textSprite = makeTextSprite('OLIWIERTAS');
-pickaxe.add(textSprite);
-
-// \u2500\u2500\u2500 EFEKT GLOW / BLOOM (emissive mesh za g\u0142owic\u0105) \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const glowGeo = new THREE.PlaneGeometry(HEAD_W * 1.4, HEAD_H * 4);
-const glowMat = new THREE.MeshBasicMaterial({
-  color: 0xaa00ff,
-  transparent: true,
-  opacity: 0.06,
-  side: THREE.DoubleSide,
-  depthWrite: false,
-});
-const glowMesh = new THREE.Mesh(glowGeo, glowMat);
-glowMesh.position.set(HEAD_X, HEAD_Y, -0.1);
-pickaxe.add(glowMesh);
-
-// \u2500\u2500\u2500 PARTICLES \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-const NPART = 120;
-const partGeo = new THREE.BufferGeometry();
-const ppos = [], pvel = [], pcol = [];
-const pColors = [
-  new THREE.Color(0xcc00ff), new THREE.Color(0xff00aa),
-  new THREE.Color(0xff60ee), new THREE.Color(0x9900ff),
-];
-for (let i = 0; i < NPART; i++) {
-  ppos.push((Math.random()-0.5)*14, (Math.random()-0.5)*10, (Math.random()-0.5)*8);
-  pvel.push((Math.random()-0.5)*0.008, (Math.random()-0.5)*0.008, (Math.random()-0.5)*0.008);
-  const c = pColors[Math.floor(Math.random()*pColors.length)];
-  pcol.push(c.r, c.g, c.b);
-}
-partGeo.setAttribute('position', new THREE.Float32BufferAttribute(ppos, 3));
-partGeo.setAttribute('color', new THREE.Float32BufferAttribute(pcol, 3));
-const partMat = new THREE.PointsMaterial({ size: 0.07, vertexColors: true, transparent: true, opacity: 0.75 });
-const parts = new THREE.Points(partGeo, partMat);
-scene.add(parts);
-
-// \u2500\u2500\u2500 INITIAL ROTATION \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500
-pickaxe.rotation.z = -Math.PI / 4; // kilof
+<!-- CANVAS -->
+<div class="canvas-area" id="canvasArea">
+  <div class="canvas-controls">
+    <button class="btn btn-sm" onclick="zoomIn()">\ud83d\udd0d+</button>
+    <div class="zoom-display" id="zoomDisplay">100%</div>
+    <button class="btn btn-sm" onclick="zoomOut()">\ud83d\udd0d\u2212</button>
+    <button class="btn btn-sm" onclick="zoomFit()">\u22a1 FIT</button>
+    <button class="btn btn-sm" onclick="zoom100()">1:1</button>
+    <button class="btn btn-sm" onclick="centerText()">\u2295</button>
+  </div>
+  <div style="position:relative;display:inline-block">
+    <canvas id="mainCanvas" width="512" height="512"></canvas>
+    <canvas id="drawCanvas" width="512" height="512" style="position:absolute;top:0;left:0;opacity:1"></canvas>
+    <canvas id="overlayCanvas" width="512" height="512" style="position:absolute;top:0;left:0
