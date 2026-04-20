@@ -2,212 +2,114 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Minecraft GUI Creator</title>
+    <title>Ultimate MC GUI Creator 3D-Look</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #1e1e1e; color: white; margin: 20px; }
-        .container { display: flex; gap: 20px; flex-wrap: wrap; }
-        
-        /* GUI Grid */
-        #gui-container { 
-            background: #c6c6c6; border: 4px solid #373737; 
-            display: grid; grid-template-columns: repeat(9, 50px); 
-            gap: 2px; padding: 5px; width: max-content;
-        }
-        .slot { 
-            width: 50px; height: 50px; background: #8b8b8b; 
-            border: 2px solid #373737; cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 10px; text-align: center; overflow: hidden;
-        }
-        .slot:hover { background: #a8a8a8; }
-        .slot.active { border-color: #00ff00; background: #999; }
-        .slot img { max-width: 32px; }
-
-        /* Panel boczny */
-        .panel { background: #2d2d2d; padding: 15px; border-radius: 8px; min-width: 300px; flex: 1; }
-        input, select, textarea { width: 100%; margin-bottom: 10px; padding: 8px; background: #444; border: 1px solid #666; color: white; }
-        button { padding: 10px; cursor: pointer; background: #4caf50; border: none; color: white; font-weight: bold; margin-right: 5px; }
-        button.delete { background: #f44336; }
-
-        /* Lista itemów */
-        .item-picker { display: grid; grid-template-columns: repeat(5, 1fr); gap: 5px; margin-top: 10px; max-height: 200px; overflow-y: auto; }
-        .item-choice { background: #444; padding: 5px; cursor: pointer; text-align: center; font-size: 11px; }
-        .item-choice:hover { background: #666; }
-
-        pre { background: #000; padding: 10px; border-radius: 5px; white-space: pre-wrap; word-wrap: break-word; }
-    </style>
-</head>
-<body>
-
-    <h1>Minecraft GUI Maker</h1>
-
-    <div class="container">
-        <div>
-            <label>Wielkość GUI:</label>
-            <select id="gui-size" onchange="initGUI()">
-                <option value="9">9 slotów (1 rząd)</option>
-                <option value="18">18 slotów (2 rzędy)</option>
-                <option value="27" selected>27 slotów (3 rzędy)</option>
-                <option value="36">36 slotów (4 rzędy)</option>
-                <option value="45">45 slotów (5 rzędów)</option>
-                <option value="54">54 sloty (6 rzędów)</option>
-            </select>
-            
-            <div id="gui-container"></div>
-            
-            <h3>Wygenerowany Kod (Skript):</h3>
-            <pre id="output-code">Otwórz GUI, aby zobaczyć kod...</pre>
-        </div>
-
-        <div class="panel">
-            <h3>Edytor Slotu: <span id="selected-slot-id">-</span></h3>
-            <label>Przedmiot (ID):</label>
-            <input type="text" id="item-id" placeholder="np. DIAMOND_SWORD" oninput="updateItem()">
-            
-            <div class="item-picker">
-                <div class="item-choice" onclick="setItem('DIAMOND')">DIAMOND</div>
-                <div class="item-choice" onclick="setItem('GOLD_INGOT')">GOLD</div>
-                <div class="item-choice" onclick="setItem('IRON_INGOT')">IRON</div>
-                <div class="item-choice" onclick="setItem('CHEST')">CHEST</div>
-                <div class="item-choice" onclick="setItem('LIGHT_BLUE_STAINED_GLASS_PANE')">L. BLUE GLASS</div>
-                <div class="item-choice" onclick="setItem('PAPER')">PAPER</div>
-                <div class="item-choice" onclick="setItem('BARRIER')">BARRIER</div>
-            </div>
-
-            <hr>
-            <label>Nazwa (Display Name):</label>
-            <input type="text" id="item-name" placeholder="&bMiecz Przeznaczenia" oninput="updateItem()">
-            
-            <label>Lore (linie oddzielaj przecinkiem):</label>
-            <textarea id="item-lore" placeholder="Linia 1, Linia 2" oninput="updateItem()"></textarea>
-            
-            <label>Custom Model Data:</label>
-            <input type="number" id="item-cmd" placeholder="0" oninput="updateItem()">
-
-            <label>Komenda / Dźwięk przy kliknięciu:</label>
-            <input type="text" id="item-action" placeholder="execute console command..." oninput="updateItem()">
-
-            <button class="delete" onclick="deleteItem()">Usuń przedmiot</button>
-        </div>
-    </div>
-
-    <script>
-        let guiData = {};
-        let currentSlot = null;
-
-        function initGUI() {
-            const size = document.getElementById('gui-size').value;
-            const container = document.getElementById('gui-container');
-            container.innerHTML = '';
-            container.style.gridTemplateRows = `repeat(${size/9}, 50px)`;
-
-            for (let i = 0; i < size; i++) {
-                const div = document.createElement('div');
-                div.className = 'slot';
-                div.id = `slot-${i}`;
-                div.innerText = i;
-                div.onclick = () => selectSlot(i);
-                div.ondblclick = () => { selectSlot(i); alert("Edytujesz teraz slot " + i); };
-                container.appendChild(div);
-                
-                // Odśwież widok jeśli dane już istnieją
-                if (guiData[i]) {
-                    renderSlotIcon(i);
-                }
-            }
-            generateCode();
+        @font-face {
+            font-family: 'Minecraft';
+            src: url('https://db.onlinewebfonts.com/t/6ab539bc7211ab9f109033333e65922c.woff2') format('woff2');
         }
 
-        function selectSlot(i) {
-            currentSlot = i;
-            document.querySelectorAll('.slot').forEach(s => s.classList.remove('active'));
-            document.getElementById(`slot-${i}`).classList.add('active');
-            document.getElementById('selected-slot-id').innerText = i;
-
-            const data = guiData[i] || { id: '', name: '', lore: '', cmd: '', action: '' };
-            document.getElementById('item-id').value = data.id;
-            document.getElementById('item-name').value = data.name;
-            document.getElementById('item-lore').value = data.lore;
-            document.getElementById('item-cmd').value = data.cmd;
-            document.getElementById('item-action').value = data.action;
+        body {
+            background-color: #333;
+            color: #fff;
+            font-family: 'Minecraft', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
         }
 
-        function setItem(id) {
-            document.getElementById('item-id').value = id;
-            updateItem();
+        /* Stylizacja Kontenera GUI na wzór MC */
+        .gui-wrapper {
+            background-color: #c6c6c6;
+            border: 3px solid #ffffff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            padding: 10px;
+            image-rendering: pixelated;
+            box-shadow: 5px 5px 0px #000;
         }
 
-        function updateItem() {
-            if (currentSlot === null) return;
-            
-            const id = document.getElementById('item-id').value.toUpperCase();
-            if (!id) {
-                delete guiData[currentSlot];
-            } else {
-                guiData[currentSlot] = {
-                    id: id,
-                    name: document.getElementById('item-name').value,
-                    lore: document.getElementById('item-lore').value,
-                    cmd: document.getElementById('item-cmd').value,
-                    action: document.getElementById('item-action').value
-                };
-            }
-            renderSlotIcon(currentSlot);
-            generateCode();
+        .gui-header {
+            color: #3f3f3f;
+            margin-bottom: 10px;
+            font-size: 20px;
+            text-shadow: none;
         }
 
-        function renderSlotIcon(i) {
-            const slot = document.getElementById(`slot-${i}`);
-            if (guiData[i] && guiData[i].id) {
-                slot.innerHTML = `<small>${guiData[i].id.substring(0,5)}</small>`;
-                slot.style.background = "#fff";
-                slot.style.color = "#000";
-            } else {
-                slot.innerHTML = i;
-                slot.style.background = "#8b8b8b";
-                slot.style.color = "white";
-            }
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(9, 36px);
+            gap: 0;
+            border: 2px solid #373737;
+            background-color: #8b8b8b;
         }
 
-        function deleteItem() {
-            if (currentSlot !== null) {
-                delete guiData[currentSlot];
-                document.getElementById('item-id').value = '';
-                renderSlotIcon(currentSlot);
-                generateCode();
-            }
+        .slot {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #373737;
+            border-top-color: #373737;
+            border-left-color: #373737;
+            border-right-color: #fff;
+            border-bottom-color: #fff;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
         }
 
-        function generateCode() {
-            const size = document.getElementById('gui-size').value;
-            let skript = `open chest inventory with ${size / 9} rows named "Custom GUI" to player\n`;
-            
-            // Grupowanie takich samych itemów (np. szyby)
-            let groups = {};
-
-            for (let slot in guiData) {
-                const item = guiData[slot];
-                const loreFormatted = item.lore ? `with lore "${item.lore.split(',').join('||')}"` : "";
-                const nameFormatted = item.name ? `named "${item.name}"` : "";
-                
-                skript += `set slot ${slot} of current inventory of player to ${item.id} ${nameFormatted} ${loreFormatted}\n`;
-                
-                // Dla Twojej prośby o listę slotów:
-                if (!groups[item.id]) groups[item.id] = [];
-                groups[item.id].push(slot);
-            }
-
-            let summary = "\n# --- PODSUMOWANIE SLOTÓW ---\n";
-            for (let id in groups) {
-                summary += `${id} - sloty: ${groups[id].join(', ')}\n`;
-            }
-
-            document.getElementById('output-code').innerText = skript + summary;
+        .slot:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+            box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
         }
 
-        // Start
-        initGUI();
-    </script>
-</body>
-</html>
+        .slot.selected {
+            background-color: rgba(0, 255, 0, 0.2);
+            outline: 2px solid #00ff00;
+            z-index: 10;
+        }
+
+        .slot img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+        }
+
+        /* Panel Edycji */
+        .editor-panel {
+            margin-top: 20px;
+            background: #222;
+            padding: 20px;
+            border: 2px solid #555;
+            width: 800px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .item-list {
+            height: 250px;
+            overflow-y: auto;
+            background: #111;
+            padding: 10px;
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 5px;
+        }
+
+        .item-asset {
+            cursor: pointer;
+            padding: 5px;
+            border: 1px solid transparent;
+            text-align: center;
+        }
+
+        .item-asset:hover {
+            border-color: #fff;
+            background: #333;
+        }
+
+        .item-asset img { width: 32px; }
