@@ -2,47 +2,66 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ultimate MC GUI Creator 3D-Look</title>
     <style>
         @font-face {
             font-family: 'Minecraft';
             src: url('https://db.onlinewebfonts.com/t/6ab539bc7211ab9f109033333e65922c.woff2') format('woff2');
+            font-display: swap;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             background-color: #333;
             color: #fff;
-            font-family: 'Minecraft', sans-serif;
+            font-family: 'Minecraft', monospace, sans-serif;
             display: flex;
             flex-direction: column;
             align-items: center;
             padding: 20px;
+            min-height: 100vh;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
         }
 
         /* Stylizacja Kontenera GUI na wzór MC */
         .gui-wrapper {
-            background-color: #c6c6c6;
+            background: linear-gradient(to right, #c6c6c6, #b8b8b8);
             border: 3px solid #ffffff;
             border-right-color: #555;
             border-bottom-color: #555;
+            border-left-color: #ffffff;
+            border-top-color: #ffffff;
             padding: 10px;
+            box-shadow: 5px 5px 0px rgba(0,0,0,0.8);
             image-rendering: pixelated;
-            box-shadow: 5px 5px 0px #000;
         }
 
         .gui-header {
             color: #3f3f3f;
             margin-bottom: 10px;
-            font-size: 20px;
-            text-shadow: none;
+            font-size: 16px;
+            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
+            font-weight: bold;
         }
 
         .inventory-grid {
             display: grid;
             grid-template-columns: repeat(9, 36px);
             gap: 0;
-            border: 2px solid #373737;
+            margin-bottom: 10px;
             background-color: #8b8b8b;
+            padding: 2px;
         }
 
         .slot {
@@ -53,41 +72,50 @@
             border-left-color: #373737;
             border-right-color: #fff;
             border-bottom-color: #fff;
-            box-sizing: border-box;
+            background-color: #8b8b8b;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             position: relative;
+            user-select: none;
+            transition: all 0.1s ease;
         }
 
         .slot:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-            box-shadow: inset 0 0 10px rgba(255,255,255,0.5);
+            background-color: #9a9a9a;
+            box-shadow: inset 0 0 5px rgba(255,255,255,0.3);
         }
 
         .slot.selected {
-            background-color: rgba(0, 255, 0, 0.2);
+            background-color: rgba(0, 255, 0, 0.3);
             outline: 2px solid #00ff00;
-            z-index: 10;
         }
 
         .slot img {
             width: 32px;
             height: 32px;
             image-rendering: pixelated;
+            pointer-events: none;
         }
 
         /* Panel Edycji */
         .editor-panel {
-            margin-top: 20px;
+            margin-top: 30px;
             background: #222;
             padding: 20px;
             border: 2px solid #555;
-            width: 800px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
+            border-top-color: #777;
+            border-left-color: #777;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .panel-title {
+            color: #fff;
+            margin-bottom: 15px;
+            font-size: 18px;
+            font-weight: bold;
         }
 
         .item-list {
@@ -96,8 +124,22 @@
             background: #111;
             padding: 10px;
             display: grid;
-            grid-template-columns: repeat(6, 1fr);
+            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
             gap: 5px;
+            border: 1px solid #555;
+        }
+
+        .item-list::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .item-list::-webkit-scrollbar-track {
+            background: #222;
+        }
+
+        .item-list::-webkit-scrollbar-thumb {
+            background: #555;
+            border-radius: 4px;
         }
 
         .item-asset {
@@ -105,11 +147,205 @@
             padding: 5px;
             border: 1px solid transparent;
             text-align: center;
+            background: #1a1a1a;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
         }
 
         .item-asset:hover {
             border-color: #fff;
             background: #333;
+            transform: scale(1.05);
         }
 
-        .item-asset img { width: 32px; }
+        .item-asset img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+        }
+
+        .item-label {
+            font-size: 10px;
+            color: #aaa;
+            word-break: break-word;
+        }
+
+        button {
+            background: #8b8b8b;
+            border: 2px solid #ffffff;
+            border-right-color: #555;
+            border-bottom-color: #555;
+            color: #000;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-family: 'Minecraft', monospace, sans-serif;
+            font-weight: bold;
+            transition: all 0.1s;
+            user-select: none;
+        }
+
+        button:hover {
+            background: #9a9a9a;
+        }
+
+        button:active {
+            border-right-color: #ffffff;
+            border-bottom-color: #ffffff;
+            border-top-color: #555;
+            border-left-color: #555;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            justify-content: center;
+        }
+
+        input, textarea {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 8px;
+            font-family: monospace;
+            resize: none;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #00ff00;
+            box-shadow: inset 0 0 5px rgba(0,255,0,0.2);
+        }
+
+        @media (max-width: 900px) {
+            .editor-panel {
+                max-width: 95vw;
+            }
+            
+            .inventory-grid {
+                grid-template-columns: repeat(6, 36px);
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Ultimate MC GUI Creator</h1>
+    
+    <div class="gui-wrapper">
+        <div class="gui-header">Ekwipunek</div>
+        <div class="inventory-grid" id="inventoryGrid"></div>
+    </div>
+
+    <div class="editor-panel">
+        <div class="panel-title">📦 Dostępne przedmioty</div>
+        <div class="item-list" id="itemList"></div>
+        <div class="button-group">
+            <button onclick="clearInventory()">Wyczyść</button>
+            <button onclick="saveToJSON()">Zapisz JSON</button>
+            <button onclick="downloadImage()">Pobierz zdjęcie</button>
+        </div>
+    </div>
+
+    <script>
+        const ITEMS = [
+            { name: 'dirt', emoji: '🟤' },
+            { name: 'stone', emoji: '⬜' },
+            { name: 'oak_log', emoji: '📚' },
+            { name: 'oak_leaves', emoji: '🍃' },
+            { name: 'diamond', emoji: '💎' },
+            { name: 'gold_ore', emoji: '✨' },
+            { name: 'iron_ore', emoji: '🩶' },
+            { name: 'glass', emoji: '🟦' },
+            { name: 'cobblestone', emoji: '🪨' },
+            { name: 'sand', emoji: '🟨' },
+            { name: 'gravel', emoji: '⚫' },
+            { name: 'grass_block', emoji: '🟢' }
+        ];
+
+        const GRID_SIZE = 9;
+        let inventory = new Array(GRID_SIZE).fill(null);
+
+        function initInventory() {
+            const grid = document.getElementById('inventoryGrid');
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < GRID_SIZE; i++) {
+                const slot = document.createElement('div');
+                slot.className = 'slot';
+                slot.id = `slot-${i}`;
+                slot.onclick = () => selectSlot(i);
+                
+                if (inventory[i]) {
+                    const item = ITEMS.find(it => it.name === inventory[i]);
+                    if (item) {
+                        slot.textContent = item.emoji;
+                        slot.title = item.name;
+                    }
+                }
+                
+                grid.appendChild(slot);
+            }
+        }
+
+        function initItemList() {
+            const list = document.getElementById('itemList');
+            list.innerHTML = '';
+            
+            ITEMS.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'item-asset';
+                div.textContent = item.emoji;
+                div.title = item.name;
+                div.onclick = () => addToSelectedSlot(item.name);
+                
+                list.appendChild(div);
+            });
+        }
+
+        let selectedSlot = 0;
+
+        function selectSlot(index) {
+            document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
+            document.getElementById(`slot-${index}`).classList.add('selected');
+            selectedSlot = index;
+        }
+
+        function addToSelectedSlot(itemName) {
+            inventory[selectedSlot] = itemName;
+            initInventory();
+        }
+
+        function clearInventory() {
+            if (confirm('Czy na pewno chcesz wyczyścić ekwipunek?')) {
+                inventory = new Array(GRID_SIZE).fill(null);
+                initInventory();
+            }
+        }
+
+        function saveToJSON() {
+            const data = JSON.stringify({ inventory }, null, 2);
+            const blob = new Blob([data], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'inventory.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function downloadImage() {
+            alert('Funkcja pobrania obrazu wymaga biblioteki html2canvas. Zainstaluj ją aby włączyć tę funkcjonalność.');
+        }
+
+        // Inicjalizacja
+        document.addEventListener('DOMContentLoaded', () => {
+            selectSlot(0);
+            initInventory();
+            initItemList();
+        });
+    </script>
+</body>
+</html>
