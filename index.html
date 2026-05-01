@@ -3,349 +3,223 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ultimate MC GUI Creator 3D-Look</title>
+    <title>DarthBox.PL — Najlepszy SkyPrac</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
     <style>
-        @font-face {
-            font-family: 'Minecraft';
-            src: url('https://db.onlinewebfonts.com/t/6ab539bc7211ab9f109033333e65922c.woff2') format('woff2');
-            font-display: swap;
+        :root {
+            --primary: #ff8c00;
+            --primary-glow: rgba(255, 140, 0, 0.4);
+            --bg-deep: #050505;
+            --bg-card: rgba(15, 15, 15, 0.95);
+            --border: rgba(255, 255, 255, 0.08);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background-color: var(--bg-deep); color: white; overflow-x: hidden; }
+
+        /* --- PRELOADER (SUBTELNY) --- */
+        #loader {
+            position: fixed; inset: 0; background: var(--bg-deep);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; transition: opacity 0.8s ease;
+        }
+        .loader-logo { 
+            width: 100px; 
+            filter: drop-shadow(0 0 20px var(--primary-glow));
+            animation: loaderSoftPulse 2s infinite ease-in-out; 
+        }
+        @keyframes loaderSoftPulse {
+            0%, 100% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 35px var(--primary)); }
+        }
+        .loader-hidden { opacity: 0; visibility: hidden; }
+
+        /* --- TŁO I PARALLAX --- */
+        #particles-js { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+        .bg-skin { 
+            position: fixed; height: 80vh; opacity: 0.12; z-index: 0; pointer-events: none; 
+            filter: drop-shadow(0 0 30px var(--primary-glow));
+        }
+        .skin-left { left: -5%; bottom: -5%; content: url('https://mc-heads.net/body/XD4min3tor/right'); }
+        .skin-right { right: -5%; bottom: -5%; content: url('https://mc-heads.net/body/Cr4zyP4cik/left'); }
+
+        /* --- NAWIGACJA --- */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 15px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            z-index: 1000; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(15px);
+            border-bottom: 1px solid var(--border);
+        }
+        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 800; font-family: 'Space Grotesk'; cursor: pointer; }
+        .nav-logo img { width: 32px; }
+
+        /* --- STRONY --- */
+        .page { display: none; padding: 110px 5% 50px; min-height: 100vh; position: relative; z-index: 10; text-align: center; }
+        .page.active { display: block; animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- ELEMENTY GRAFICZNE --- */
+        .hero-logo { width: clamp(130px, 25vw, 180px); margin-bottom: 15px; filter: drop-shadow(0 0 25px var(--primary-glow)); animation: float 4s infinite ease-in-out; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+        .btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white;
+            padding: 14px 30px; border-radius: 12px; font-weight: 800; cursor: pointer;
+            transition: 0.3s; display: flex; align-items: center; gap: 10px; text-decoration: none; font-size: 0.85rem;
         }
 
-        body {
-            background-color: #333;
-            color: #fff;
-            font-family: 'Minecraft', monospace, sans-serif;
+        /* --- SKLEP I ANIMACJA SKINA --- */
+        .shop-container { display: grid; grid-template-columns: 1fr 380px; gap: 20px; text-align: left; max-width: 1000px; margin: 0 auto; }
+        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; }
+        input { width: 100%; background: #000; border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; margin-top: 8px; outline: none; }
+        input:focus { border-color: var(--primary); }
+
+        .skin-wrapper { height: 240px; display: flex; align-items: center; justify-content: center; position: relative; }
+        #skin-img { height: 100%; animation: heroIdle 5s infinite ease-in-out; transform-origin: bottom center; }
+        @keyframes heroIdle { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.03) rotate(2deg); } }
+
+        /* --- STOPKA Z SOCIALAMI --- */
+        footer {
+            margin-top: 50px;
+            padding: 40px 5%;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        h1 {
-            margin-bottom: 20px;
-            font-size: 28px;
-            text-shadow: 2px 2px 0px rgba(0,0,0,0.5);
-        }
-
-        /* Stylizacja Kontenera GUI na wzór MC */
-        .gui-wrapper {
-            background: linear-gradient(to right, #c6c6c6, #b8b8b8);
-            border: 3px solid #ffffff;
-            border-right-color: #555;
-            border-bottom-color: #555;
-            border-left-color: #ffffff;
-            border-top-color: #ffffff;
-            padding: 10px;
-            box-shadow: 5px 5px 0px rgba(0,0,0,0.8);
-            image-rendering: pixelated;
-        }
-
-        .gui-header {
-            color: #3f3f3f;
-            margin-bottom: 10px;
-            font-size: 16px;
-            text-shadow: 1px 1px 0px rgba(255,255,255,0.5);
-            font-weight: bold;
-        }
-
-        .inventory-grid {
-            display: grid;
-            grid-template-columns: repeat(9, 36px);
-            gap: 0;
-            margin-bottom: 10px;
-            background-color: #8b8b8b;
-            padding: 2px;
-        }
-
-        .slot {
-            width: 36px;
-            height: 36px;
-            border: 2px solid #373737;
-            border-top-color: #373737;
-            border-left-color: #373737;
-            border-right-color: #fff;
-            border-bottom-color: #fff;
-            background-color: #8b8b8b;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
+            gap: 20px;
+            z-index: 10;
             position: relative;
-            user-select: none;
-            transition: all 0.1s ease;
         }
-
-        .slot:hover {
-            background-color: #9a9a9a;
-            box-shadow: inset 0 0 5px rgba(255,255,255,0.3);
-        }
-
-        .slot.selected {
-            background-color: rgba(0, 255, 0, 0.3);
-            outline: 2px solid #00ff00;
-        }
-
-        .slot img {
-            width: 32px;
-            height: 32px;
-            image-rendering: pixelated;
-            pointer-events: none;
-        }
-
-        /* Panel Edycji */
-        .editor-panel {
-            margin-top: 30px;
-            background: #222;
-            padding: 20px;
-            border: 2px solid #555;
-            border-top-color: #777;
-            border-left-color: #777;
-            width: 100%;
-            max-width: 900px;
-        }
-
-        .panel-title {
-            color: #fff;
-            margin-bottom: 15px;
-            font-size: 18px;
-            font-weight: bold;
-        }
-
-        .item-list {
-            height: 250px;
-            overflow-y: auto;
-            background: #111;
-            padding: 10px;
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(50px, 1fr));
-            gap: 5px;
-            border: 1px solid #555;
-        }
-
-        .item-list::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .item-list::-webkit-scrollbar-track {
-            background: #222;
-        }
-
-        .item-list::-webkit-scrollbar-thumb {
-            background: #555;
-            border-radius: 4px;
-        }
-
-        .item-asset {
-            cursor: pointer;
-            padding: 5px;
-            border: 1px solid transparent;
-            text-align: center;
-            background: #1a1a1a;
-            transition: all 0.2s;
+        .social-row { display: flex; gap: 15px; }
+        .social-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border);
+            color: white;
+            padding: 12px 25px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.8rem;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            gap: 5px;
-        }
-
-        .item-asset:hover {
-            border-color: #fff;
-            background: #333;
-            transform: scale(1.05);
-        }
-
-        .item-asset img {
-            width: 32px;
-            height: 32px;
-            image-rendering: pixelated;
-        }
-
-        .item-label {
-            font-size: 10px;
-            color: #aaa;
-            word-break: break-word;
-        }
-
-        button {
-            background: #8b8b8b;
-            border: 2px solid #ffffff;
-            border-right-color: #555;
-            border-bottom-color: #555;
-            color: #000;
-            padding: 8px 16px;
-            cursor: pointer;
-            font-family: 'Minecraft', monospace, sans-serif;
-            font-weight: bold;
-            transition: all 0.1s;
-            user-select: none;
-        }
-
-        button:hover {
-            background: #9a9a9a;
-        }
-
-        button:active {
-            border-right-color: #ffffff;
-            border-bottom-color: #ffffff;
-            border-top-color: #555;
-            border-left-color: #555;
-        }
-
-        .button-group {
-            display: flex;
             gap: 10px;
-            margin-top: 15px;
-            justify-content: center;
+            transition: 0.3s;
         }
+        .social-btn i { color: var(--primary); font-size: 1.1rem; }
 
-        input, textarea {
-            background: #1a1a1a;
-            color: #fff;
-            border: 1px solid #555;
-            padding: 8px;
-            font-family: monospace;
-            resize: none;
-        }
-
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #00ff00;
-            box-shadow: inset 0 0 5px rgba(0,255,0,0.2);
-        }
-
-        @media (max-width: 900px) {
-            .editor-panel {
-                max-width: 95vw;
-            }
-            
-            .inventory-grid {
-                grid-template-columns: repeat(6, 36px);
-            }
-        }
+        @media (max-width: 850px) { .shop-container { grid-template-columns: 1fr; } }
     </style>
 </head>
-<body>
-    <h1>Ultimate MC GUI Creator</h1>
-    
-    <div class="gui-wrapper">
-        <div class="gui-header">Ekwipunek</div>
-        <div class="inventory-grid" id="inventoryGrid"></div>
+<body onload="endLoad()">
+
+<div id="loader"><img src="https://i.imgur.com/kBq0aVY.png" class="loader-logo"></div>
+
+<div id="particles-js"></div>
+<div class="bg-skin skin-left"></div>
+<div class="bg-skin skin-right"></div>
+
+<nav>
+    <div class="nav-logo" onclick="go('home')">
+        <img src="https://i.imgur.com/kBq0aVY.png">
+        <span>DARTHBOX<span style="color:var(--primary)">.PL</span></span>
+    </div>
+    <button class="btn" style="padding: 8px 15px; font-size: 0.7rem;" onclick="copyIP()">IP: DARTHBOX.PL</button>
+</nav>
+
+<div id="home" class="page active">
+    <img src="https://i.imgur.com/kBq0aVY.png" class="hero-logo">
+    <h1 style="font-family: 'Space Grotesk'; font-size: clamp(1.8rem, 8vw, 3.5rem); text-transform: uppercase;">DARTH<span style="color:var(--primary)">BOX</span></h1>
+    <p style="font-weight: 800; color: #555; letter-spacing: 2px; margin-bottom: 25px;">NAJLEPSZY SKYPRAC W POLSCE</p>
+
+    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
+        <button class="btn" onclick="go('shop')"><i class="fas fa-shopping-basket"></i> SKLEP SERWERA</button>
+        <button class="btn" onclick="go('rules')"><i class="fas fa-book"></i> REGULAMIN</button>
     </div>
 
-    <div class="editor-panel">
-        <div class="panel-title">📦 Dostępne przedmioty</div>
-        <div class="item-list" id="itemList"></div>
-        <div class="button-group">
-            <button onclick="clearInventory()">Wyczyść</button>
-            <button onclick="saveToJSON()">Zapisz JSON</button>
-            <button onclick="downloadImage()">Pobierz zdjęcie</button>
+    <div style="margin-top: 50px;">
+        <p style="font-size: 0.6rem; font-weight: 800; color: var(--primary); letter-spacing: 3px;">START EDYCJI ZA:</p>
+        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
+            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--border);">
+                <span id="d" style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">00</span><br><small style="font-size:0.5rem; color:#444;">DNI</small>
+            </div>
+            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--border);">
+                <span id="h" style="font-size: 1.5rem; font-weight: 800;">00</span><br><small style="font-size:0.5rem; color:#444;">GODZ</small>
+            </div>
+            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--border);">
+                <span id="m" style="font-size: 1.5rem; font-weight: 800;">00</span><br><small style="font-size:0.5rem; color:#444;">MIN</small>
+            </div>
+            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--primary);">
+                <span id="s" style="font-size: 1.5rem; font-weight: 800;">00</span><br><small style="font-size:0.5rem; color:#444;">SEK</small>
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        const ITEMS = [
-            { name: 'dirt', emoji: '🟤' },
-            { name: 'stone', emoji: '⬜' },
-            { name: 'oak_log', emoji: '📚' },
-            { name: 'oak_leaves', emoji: '🍃' },
-            { name: 'diamond', emoji: '💎' },
-            { name: 'gold_ore', emoji: '✨' },
-            { name: 'iron_ore', emoji: '🩶' },
-            { name: 'glass', emoji: '🟦' },
-            { name: 'cobblestone', emoji: '🪨' },
-            { name: 'sand', emoji: '🟨' },
-            { name: 'gravel', emoji: '⚫' },
-            { name: 'grass_block', emoji: '🟢' }
-        ];
+<div id="shop" class="page">
+    <div class="shop-container">
+        <div class="card">
+            <h2 style="font-family: 'Space Grotesk'; font-size: 1.6rem; margin-bottom: 20px;">DOŁADUJ PORTFEL</h2>
+            <input type="text" id="nick" oninput="updateSkin()" placeholder="Nick w grze...">
+            <input type="email" placeholder="Adres e-mail...">
+            <div style="margin-top:20px;">
+                <p style="font-weight: 800; font-size: 0.8rem;">KWOTA: <span id="val" style="color: var(--primary); font-size: 1.2rem;">1</span> PLN</p>
+                <input type="range" min="1" max="200" value="1" oninput="sync(this.value)" style="accent-color: var(--primary);">
+            </div>
+        </div>
+        <div class="card" style="text-align: center;">
+            <div class="skin-wrapper"><img src="https://mc-heads.net/body/MHF_Question" id="skin-img"></div>
+            <div style="width: 100%; background: #000; padding: 18px; border-radius: 15px; border: 1px solid var(--primary); margin-top: 15px;">
+                <span id="total" style="font-size: 2.2rem; font-family: 'Space Grotesk'; color: var(--primary);">1.00</span> <span style="font-weight: 800; color: var(--primary);">PLN</span>
+            </div>
+            <button class="btn" style="width: 100%; margin-top: 15px; background: var(--primary); color: black; justify-content: center;">ZAPŁAĆ TERAZ</button>
+        </div>
+    </div>
+</div>
 
-        const GRID_SIZE = 9;
-        let inventory = new Array(GRID_SIZE).fill(null);
+<div id="rules" class="page">
+    <h1 style="font-family:'Space Grotesk'; margin-bottom:30px;">REGULAMIN</h1>
+    <div style="text-align: left; max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 15px; border: 1px solid var(--border);">
+        <p style="margin-bottom: 10px;">1. Zakaz używania cheatów.</p>
+        <p style="margin-bottom: 10px;">2. Szanuj innych graczy.</p>
+        <p style="margin-bottom: 10px;">3. Administracja ma zawsze rację.</p>
+    </div>
+    <button class="btn" style="margin: 20px auto;" onclick="go('home')">POWRÓT</button>
+</div>
 
-        function initInventory() {
-            const grid = document.getElementById('inventoryGrid');
-            grid.innerHTML = '';
-            
-            for (let i = 0; i < GRID_SIZE; i++) {
-                const slot = document.createElement('div');
-                slot.className = 'slot';
-                slot.id = `slot-${i}`;
-                slot.onclick = () => selectSlot(i);
-                
-                if (inventory[i]) {
-                    const item = ITEMS.find(it => it.name === inventory[i]);
-                    if (item) {
-                        slot.textContent = item.emoji;
-                        slot.title = item.name;
-                    }
-                }
-                
-                grid.appendChild(slot);
-            }
+<footer>
+    <div class="social-row">
+        <a href="https://www.tiktok.com/@TWOJ_NICK" target="_blank" class="social-btn">
+            <i class="fab fa-tiktok"></i> TIKTOK
+        </a>
+        <a href="https://discord.gg/TWOJ_LINK" target="_blank" class="social-btn">
+            <i class="fab fa-discord"></i> DISCORD
+        </a>
+    </div>
+    <p style="font-size: 0.6rem; color: #333; font-weight: 800;">&copy; 2026 DARTHBOX.PL — WSZELKIE PRAWA ZASTRZEŻONE</p>
+</footer>
+
+<script>
+    function endLoad() { setTimeout(() => { document.getElementById('loader').classList.add('loader-hidden'); }, 1000); }
+    function go(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+    function sync(v) { document.getElementById('val').innerText = v; document.getElementById('total').innerText = v + ".00"; }
+    function updateSkin() { const n = document.getElementById('nick').value; if(n.length > 2) document.getElementById('skin-img').src = `https://mc-heads.net/body/${n}`; }
+    function copyIP() { navigator.clipboard.writeText("darthbox.pl"); alert("IP SKOPIOWANO!"); }
+
+    function updateT() {
+        const diff = new Date("Jan 20, 2026 18:00:00").getTime() - new Date().getTime();
+        if(diff > 0) {
+            document.getElementById('d').innerText = Math.floor(diff/86400000).toString().padStart(2,'0');
+            document.getElementById('h').innerText = Math.floor((diff/3600000)%24).toString().padStart(2,'0');
+            document.getElementById('m').innerText = Math.floor((diff/60000)%60).toString().padStart(2,'0');
+            document.getElementById('s').innerText = Math.floor((diff/1000)%60).toString().padStart(2,'0');
         }
+    }
+    setInterval(updateT, 1000); updateT();
 
-        function initItemList() {
-            const list = document.getElementById('itemList');
-            list.innerHTML = '';
-            
-            ITEMS.forEach(item => {
-                const div = document.createElement('div');
-                div.className = 'item-asset';
-                div.textContent = item.emoji;
-                div.title = item.name;
-                div.onclick = () => addToSelectedSlot(item.name);
-                
-                list.appendChild(div);
-            });
-        }
-
-        let selectedSlot = 0;
-
-        function selectSlot(index) {
-            document.querySelectorAll('.slot').forEach(s => s.classList.remove('selected'));
-            document.getElementById(`slot-${index}`).classList.add('selected');
-            selectedSlot = index;
-        }
-
-        function addToSelectedSlot(itemName) {
-            inventory[selectedSlot] = itemName;
-            initInventory();
-        }
-
-        function clearInventory() {
-            if (confirm('Czy na pewno chcesz wyczyścić ekwipunek?')) {
-                inventory = new Array(GRID_SIZE).fill(null);
-                initInventory();
-            }
-        }
-
-        function saveToJSON() {
-            const data = JSON.stringify({ inventory }, null, 2);
-            const blob = new Blob([data], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'inventory.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function downloadImage() {
-            alert('Funkcja pobrania obrazu wymaga biblioteki html2canvas. Zainstaluj ją aby włączyć tę funkcjonalność.');
-        }
-
-        // Inicjalizacja
-        document.addEventListener('DOMContentLoaded', () => {
-            selectSlot(0);
-            initInventory();
-            initItemList();
-        });
-    </script>
+    particlesJS("particles-js", { "particles": { "number": { "value": 35 }, "color": { "value": "#ff8c00" }, "opacity": { "value": 0.2 }, "size": { "value": 2 }, "line_linked": { "enable": true, "distance": 120, "color": "#ff8c00", "opacity": 0.1 }, "move": { "enable": true, "speed": 1 } } });
+</script>
 </body>
 </html>
