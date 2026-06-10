@@ -3,223 +3,436 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DarthBox.PL — Najlepszy SkyPrac</title>
-    
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-
+    <title>Minecraft Texture & Font Generator</title>
     <style>
         :root {
-            --primary: #ff8c00;
-            --primary-glow: rgba(255, 140, 0, 0.4);
-            --bg-deep: #050505;
-            --bg-card: rgba(15, 15, 15, 0.95);
-            --border: rgba(255, 255, 255, 0.08);
+            --bg-dark: #121212;
+            --panel-bg: #1e1e1e;
+            --mc-green: #3c8527;
+            --mc-green-hover: #52a43a;
+            --text-color: #e0e0e0;
+            --border-color: #333;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background-color: var(--bg-deep); color: white; overflow-x: hidden; }
-
-        /* --- PRELOADER (SUBTELNY) --- */
-        #loader {
-            position: fixed; inset: 0; background: var(--bg-deep);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999; transition: opacity 0.8s ease;
-        }
-        .loader-logo { 
-            width: 100px; 
-            filter: drop-shadow(0 0 20px var(--primary-glow));
-            animation: loaderSoftPulse 2s infinite ease-in-out; 
-        }
-        @keyframes loaderSoftPulse {
-            0%, 100% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 35px var(--primary)); }
-        }
-        .loader-hidden { opacity: 0; visibility: hidden; }
-
-        /* --- TŁO I PARALLAX --- */
-        #particles-js { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
-        .bg-skin { 
-            position: fixed; height: 80vh; opacity: 0.12; z-index: 0; pointer-events: none; 
-            filter: drop-shadow(0 0 30px var(--primary-glow));
-        }
-        .skin-left { left: -5%; bottom: -5%; content: url('https://mc-heads.net/body/XD4min3tor/right'); }
-        .skin-right { right: -5%; bottom: -5%; content: url('https://mc-heads.net/body/Cr4zyP4cik/left'); }
-
-        /* --- NAWIGACJA --- */
-        nav {
-            position: fixed; top: 0; width: 100%; padding: 15px 5%;
-            display: flex; justify-content: space-between; align-items: center;
-            z-index: 1000; background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(15px);
-            border-bottom: 1px solid var(--border);
-        }
-        .nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: white; font-weight: 800; font-family: 'Space Grotesk'; cursor: pointer; }
-        .nav-logo img { width: 32px; }
-
-        /* --- STRONY --- */
-        .page { display: none; padding: 110px 5% 50px; min-height: 100vh; position: relative; z-index: 10; text-align: center; }
-        .page.active { display: block; animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- ELEMENTY GRAFICZNE --- */
-        .hero-logo { width: clamp(130px, 25vw, 180px); margin-bottom: 15px; filter: drop-shadow(0 0 25px var(--primary-glow)); animation: float 4s infinite ease-in-out; }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-
-        .btn {
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: white;
-            padding: 14px 30px; border-radius: 12px; font-weight: 800; cursor: pointer;
-            transition: 0.3s; display: flex; align-items: center; gap: 10px; text-decoration: none; font-size: 0.85rem;
-        }
-
-        /* --- SKLEP I ANIMACJA SKINA --- */
-        .shop-container { display: grid; grid-template-columns: 1fr 380px; gap: 20px; text-align: left; max-width: 1000px; margin: 0 auto; }
-        .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 20px; padding: 30px; }
-        input { width: 100%; background: #000; border: 1px solid var(--border); padding: 14px; border-radius: 12px; color: white; margin-top: 8px; outline: none; }
-        input:focus { border-color: var(--primary); }
-
-        .skin-wrapper { height: 240px; display: flex; align-items: center; justify-content: center; position: relative; }
-        #skin-img { height: 100%; animation: heroIdle 5s infinite ease-in-out; transform-origin: bottom center; }
-        @keyframes heroIdle { 0%, 100% { transform: scale(1) rotate(0deg); } 50% { transform: scale(1.03) rotate(2deg); } }
-
-        /* --- STOPKA Z SOCIALAMI --- */
-        footer {
-            margin-top: 50px;
-            padding: 40px 5%;
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 20px;
-            z-index: 10;
-            position: relative;
         }
-        .social-row { display: flex; gap: 15px; }
-        .social-btn {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border);
-            color: white;
-            padding: 12px 25px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 800;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.3s;
-        }
-        .social-btn i { color: var(--primary); font-size: 1.1rem; }
 
-        @media (max-width: 850px) { .shop-container { grid-template-columns: 1fr; } }
+        h1 {
+            color: #fff;
+            text-shadow: 2px 2px #000;
+            margin-bottom: 20px;
+        }
+
+        .container {
+            display: flex;
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+            flex-wrap: wrap;
+        }
+
+        .panel {
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            flex: 1;
+            min-width: 300px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+
+        .preview-panel {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--panel-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            position: sticky;
+            top: 20px;
+            height: fit-content;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        input[type="text"], select, input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            background: #2d2d2d;
+            border: 1px solid #444;
+            color: #fff;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .color-pickers {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .color-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        input[type="color"] {
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        .btn {
+            background-color: var(--mc-green);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.2s;
+            text-transform: uppercase;
+            box-shadow: 0 4px #1e5313;
+        }
+
+        .btn:hover {
+            background-color: var(--mc-green-hover);
+        }
+
+        .btn:active {
+            box-shadow: 0 2px #1e5313;
+            transform: translateY(2px);
+        }
+
+        #canvasContainer {
+            background-image: linear-gradient(45deg, #2b2b2b 25%, transparent 25%), 
+                              linear-gradient(-45deg, #2b2b2b 25%, transparent 25%), 
+                              linear-gradient(45deg, transparent 75%, #2b2b2b 75%), 
+                              linear-gradient(-45deg, transparent 75%, #2b2b2b 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0;
+            background-color: #1a1a1a;
+            border: 2px solid #000;
+            margin-bottom: 20px;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            max-width: 100%;
+            overflow: auto;
+        }
+
+        canvas {
+            image-rendering: pixelated;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .preset-gradients {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .preset-btn {
+            background: #333;
+            border: 1px solid #555;
+            color: #fff;
+            padding: 4px 8px;
+            font-size: 11px;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .preset-btn:hover {
+            background: #444;
+        }
+
+        .info-box {
+            background: #2a2212;
+            border-left: 4px solid #e69c24;
+            padding: 10px;
+            font-size: 12px;
+            margin-top: 15px;
+            border-radius: 0 4px 4px 0;
+        }
     </style>
 </head>
-<body onload="endLoad()">
+<body>
 
-<div id="loader"><img src="https://i.imgur.com/kBq0aVY.png" class="loader-logo"></div>
+    <h1>Minecraft Texture & Custom Banner Generator</h1>
 
-<div id="particles-js"></div>
-<div class="bg-skin skin-left"></div>
-<div class="bg-skin skin-right"></div>
+    <div class="container">
+        <div class="panel">
+            <h2>Konfiguracja Tekstury</h2>
+            <hr style="border-color:#444; margin-bottom:15px;">
 
-<nav>
-    <div class="nav-logo" onclick="go('home')">
-        <img src="https://i.imgur.com/kBq0aVY.png">
-        <span>DARTHBOX<span style="color:var(--primary)">.PL</span></span>
-    </div>
-    <button class="btn" style="padding: 8px 15px; font-size: 0.7rem;" onclick="copyIP()">IP: DARTHBOX.PL</button>
-</nav>
-
-<div id="home" class="page active">
-    <img src="https://i.imgur.com/kBq0aVY.png" class="hero-logo">
-    <h1 style="font-family: 'Space Grotesk'; font-size: clamp(1.8rem, 8vw, 3.5rem); text-transform: uppercase;">DARTH<span style="color:var(--primary)">BOX</span></h1>
-    <p style="font-weight: 800; color: #555; letter-spacing: 2px; margin-bottom: 25px;">NAJLEPSZY SKYPRAC W POLSCE</p>
-
-    <div style="display: flex; justify-content: center; gap: 15px; flex-wrap: wrap;">
-        <button class="btn" onclick="go('shop')"><i class="fas fa-shopping-basket"></i> SKLEP SERWERA</button>
-        <button class="btn" onclick="go('rules')"><i class="fas fa-book"></i> REGULAMIN</button>
-    </div>
-
-    <div style="margin-top: 50px;">
-        <p style="font-size: 0.6rem; font-weight: 800; color: var(--primary); letter-spacing: 3px;">START EDYCJI ZA:</p>
-        <div style="display: flex; justify-content: center; gap: 10px; margin-top: 10px;">
-            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                <span id="d" style="font-size: 1.5rem; font-weight: 800; color: var(--primary);">00</span><br><small style="font-size:0.5rem; color:#444;">DNI</small>
+            <div class="form-group">
+                <label for="textInput">Tekst / Napis (Obsługuje spacje):</label>
+                <input type="text" id="textInput" value="TEST" placeholder="Wpisz tekst lub emotkę...">
             </div>
-            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                <span id="h" style="font-size: 1.5rem; font-weight: 800;">00</span><br><small style="font-size:0.5rem; color:#444;">GODZ</small>
+
+            <div class="form-group">
+                <label for="resolution">Rozdzielczość bazowa (Siatka Minecrafta):</label>
+                <select id="resolution">
+                    <option value="16">16x16 (Klasyczny MC)</option>
+                    <option value="32" selected>32x32 (Faithful HD)</option>
+                    <option value="64">64x64 (Dla szczegółowych emotek)</option>
+                    <option value="128">128x128 (Ultra HD)</option>
+                </select>
             </div>
-            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--border);">
-                <span id="m" style="font-size: 1.5rem; font-weight: 800;">00</span><br><small style="font-size:0.5rem; color:#444;">MIN</small>
+
+            <div class="form-group">
+                <label for="scaleMultiplier">Skalowanie wyjściowe (Zwiększanie rozmiaru pliku):</label>
+                <select id="scaleMultiplier">
+                    <option value="1">1x (Oryginalny rozmiar)</option>
+                    <option value="2">2x</option>
+                    <option value="4" selected>4x (Zalecane do tekstur wyższej jakości)</option>
+                    <option value="8">8x</option>
+                    <option value="16">16x</option>
+                </select>
             </div>
-            <div style="background: rgba(0,0,0,0.6); padding: 10px 15px; border-radius: 10px; border: 1px solid var(--primary);">
-                <span id="s" style="font-size: 1.5rem; font-weight: 800;">00</span><br><small style="font-size:0.5rem; color:#444;">SEK</small>
+
+            <div class="form-group">
+                <label for="bgShape">Kształt plakietki/tła:</label>
+                <select id="bgShape">
+                    <option value="ticket">Bilet / Plakietka ze ściętymi rogami (Jak na foto)</option>
+                    <option value="rounded">Zaokrąglony prostokąt</option>
+                    <option value="rect">Zwykły prostokąt</option>
+                    <option value="none">Brak tła (Sam tekst / Emotka transparentna)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Styl Tła (Gradient / Kolory):</label>
+                <div class="color-pickers">
+                    <div class="color-box">
+                        <span style="font-size:10px">Góra/Środek</span>
+                        <input type="color" id="bgColor1" value="#ff0000">
+                    </div>
+                    <div class="color-box">
+                        <span style="font-size:10px">Dół/Cień</span>
+                        <input type="color" id="bgColor2" value="#660000">
+                    </div>
+                    <div class="color-box">
+                        <span style="font-size:10px">Obwódka</span>
+                        <input type="color" id="borderColor" value="#990000">
+                    </div>
+                    <div class="color-box">
+                        <span style="font-size:10px">Kolor Tekstu</span>
+                        <input type="color" id="textColor" value="#ffffff">
+                    </div>
+                    <div class="color-box">
+                        <span style="font-size:10px">Cień Tekstu</span>
+                        <input type="color" id="shadowColor" value="#330000">
+                    </div>
+                </div>
+                
+                <label style="margin-top: 10px; font-size: 12px;">Gotowe palety gradientów (Kliknij aby wybrać):</label>
+                <div class="preset-gradients" id="presets">
+                    </div>
+            </div>
+
+            <div class="info-box">
+                <strong>Config Replacer:</strong> Plik pobierany jest w formacie <code>.png</code>. Możesz go wrzucić bezpośrednio do swojego Resource Packa (np. do <code>assets/minecraft/textures/font/</code> lub jako ikonę emotki w pluginach typu ItemsAdder / Oraxen).
             </div>
         </div>
-    </div>
-</div>
 
-<div id="shop" class="page">
-    <div class="shop-container">
-        <div class="card">
-            <h2 style="font-family: 'Space Grotesk'; font-size: 1.6rem; margin-bottom: 20px;">DOŁADUJ PORTFEL</h2>
-            <input type="text" id="nick" oninput="updateSkin()" placeholder="Nick w grze...">
-            <input type="email" placeholder="Adres e-mail...">
-            <div style="margin-top:20px;">
-                <p style="font-weight: 800; font-size: 0.8rem;">KWOTA: <span id="val" style="color: var(--primary); font-size: 1.2rem;">1</span> PLN</p>
-                <input type="range" min="1" max="200" value="1" oninput="sync(this.value)" style="accent-color: var(--primary);">
+        <div class="preview-panel">
+            <h2>Podgląd na żywo</h2>
+            <div id="canvasContainer">
+                <canvas id="textureCanvas"></canvas>
             </div>
-        </div>
-        <div class="card" style="text-align: center;">
-            <div class="skin-wrapper"><img src="https://mc-heads.net/body/MHF_Question" id="skin-img"></div>
-            <div style="width: 100%; background: #000; padding: 18px; border-radius: 15px; border: 1px solid var(--primary); margin-top: 15px;">
-                <span id="total" style="font-size: 2.2rem; font-family: 'Space Grotesk'; color: var(--primary);">1.00</span> <span style="font-weight: 800; color: var(--primary);">PLN</span>
-            </div>
-            <button class="btn" style="width: 100%; margin-top: 15px; background: var(--primary); color: black; justify-content: center;">ZAPŁAĆ TERAZ</button>
+            <button class="btn" id="downloadBtn">Pobierz Teksturę (.PNG)</button>
         </div>
     </div>
-</div>
 
-<div id="rules" class="page">
-    <h1 style="font-family:'Space Grotesk'; margin-bottom:30px;">REGULAMIN</h1>
-    <div style="text-align: left; max-width: 600px; margin: 0 auto; background: rgba(255,255,255,0.03); padding: 25px; border-radius: 15px; border: 1px solid var(--border);">
-        <p style="margin-bottom: 10px;">1. Zakaz używania cheatów.</p>
-        <p style="margin-bottom: 10px;">2. Szanuj innych graczy.</p>
-        <p style="margin-bottom: 10px;">3. Administracja ma zawsze rację.</p>
-    </div>
-    <button class="btn" style="margin: 20px auto;" onclick="go('home')">POWRÓT</button>
-</div>
+    <script>
+        const canvas = document.getElementById('textureCanvas');
+        const ctx = canvas.getContext('2d');
 
-<footer>
-    <div class="social-row">
-        <a href="https://www.tiktok.com/@TWOJ_NICK" target="_blank" class="social-btn">
-            <i class="fab fa-tiktok"></i> TIKTOK
-        </a>
-        <a href="https://discord.gg/TWOJ_LINK" target="_blank" class="social-btn">
-            <i class="fab fa-discord"></i> DISCORD
-        </a>
-    </div>
-    <p style="font-size: 0.6rem; color: #333; font-weight: 800;">&copy; 2026 DARTHBOX.PL — WSZELKIE PRAWA ZASTRZEŻONE</p>
-</footer>
+        // Form elementy
+        const textInput = document.getElementById('textInput');
+        const resolutionSelect = document.getElementById('resolution');
+        const scaleSelect = document.getElementById('scaleMultiplier');
+        const bgShapeSelect = document.getElementById('bgShape');
+        const bgColor1 = document.getElementById('bgColor1');
+        const bgColor2 = document.getElementById('bgColor2');
+        const borderColor = document.getElementById('borderColor');
+        const textColor = document.getElementById('textColor');
+        const shadowColor = document.getElementById('shadowColor');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const presetsContainer = document.getElementById('presets');
 
-<script>
-    function endLoad() { setTimeout(() => { document.getElementById('loader').classList.add('loader-hidden'); }, 1000); }
-    function go(id) { document.querySelectorAll('.page').forEach(p => p.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
-    function sync(v) { document.getElementById('val').innerText = v; document.getElementById('total').innerText = v + ".00"; }
-    function updateSkin() { const n = document.getElementById('nick').value; if(n.length > 2) document.getElementById('skin-img').src = `https://mc-heads.net/body/${n}`; }
-    function copyIP() { navigator.clipboard.writeText("darthbox.pl"); alert("IP SKOPIOWANO!"); }
+        // Kilkanaście gotowych epickich gradientów (w tym minecraftowe style)
+        const gradientPresets = [
+            { name: '🔥 Czerwony (Foto)', bg1: '#ff0000', bg2: '#660000', border: '#990000', text: '#ffffff', shadow: '#330000' },
+            { name: '💎 Diament', bg1: '#00d2ff', bg2: '#006699', border: '#00a8cc', text: '#ffffff', shadow: '#00334e' },
+            { name: '🌿 Szmaragd', bg1: '#55ff55', bg2: '#116611', border: '#22aa22', text: '#ffffff', shadow: '#052205' },
+            { name: '🌟 Złoto', bg1: '#ffca3a', bg2: '#8a6500', border: '#cca010', text: '#ffffff', shadow: '#3a2a00' },
+            { name: '🔮 Ender', bg1: '#b5179e', bg2: '#3f37c9', border: '#7209b7', text: '#ffffff', shadow: '#1f0033' },
+            { name: '🖤 Netheryt', bg1: '#4a4e69', bg2: '#22223b', border: '#4a4e69', text: '#f2e9e1', shadow: '#11111b' },
+            { name: '🌈 Toxic', bg1: '#9ef01a', bg2: '#004b23', border: '#38b000', text: '#ffffff', shadow: '#002000' },
+            { name: '❄️ Lodowy', bg1: '#e0fbfc', bg2: '#3d5a80', border: '#98c1d9', text: '#ffffff', shadow: '#21324a' },
+            { name: '🍊 Cyberpunk', bg1: '#ff0055', bg2: '#000000', border: '#ff0055', text: '#00ffff', shadow: '#003333' },
+            { name: '🌅 Zachód', bg1: '#f77f00', bg2: '#d62828', border: '#fcbf49', text: '#ffffff', shadow: '#3d0000' },
+            { name: '🫐 Jagoda', bg1: '#7209b7', bg2: '#f72585', border: '#3f37c9', text: '#ffffff', shadow: '#220033' }
+        ];
 
-    function updateT() {
-        const diff = new Date("Jan 20, 2026 18:00:00").getTime() - new Date().getTime();
-        if(diff > 0) {
-            document.getElementById('d').innerText = Math.floor(diff/86400000).toString().padStart(2,'0');
-            document.getElementById('h').innerText = Math.floor((diff/3600000)%24).toString().padStart(2,'0');
-            document.getElementById('m').innerText = Math.floor((diff/60000)%60).toString().padStart(2,'0');
-            document.getElementById('s').innerText = Math.floor((diff/1000)%60).toString().padStart(2,'0');
+        // Generuj przyciski palet
+        gradientPresets.forEach(preset => {
+            const btn = document.createElement('button');
+            btn.className = 'preset-btn';
+            btn.innerText = preset.name;
+            btn.style.background = `linear-gradient(135deg, ${preset.bg1}, ${preset.bg2})`;
+            btn.addEventListener('click', () => {
+                bgColor1.value = preset.bg1;
+                bgColor2.value = preset.bg2;
+                borderColor.value = preset.border;
+                textColor.value = preset.text;
+                shadowColor.value = preset.shadow;
+                draw();
+            });
+            presetsContainer.appendChild(btn);
+        });
+
+        function draw() {
+            const baseRes = parseInt(resolutionSelect.value);
+            const scale = parseInt(scaleSelect.value);
+            
+            // Tekst decyduje o szerokości obrazka (automatyczne dopasowanie do długości napisu)
+            const text = textInput.value || " ";
+            
+            // Dynamiczne wyliczanie proporcji (szerokość zależy od tekstu)
+            ctx.font = `bold ${baseRes * 0.5}px "Courier New", Courier, monospace`;
+            const textMetrics = ctx.measureText(text);
+            
+            // Szerokość dopasowana do tekstu z marginesami
+            const calculatedBaseWidth = Math.max(baseRes * 2, Math.ceil(textMetrics.width + baseRes * 0.6));
+            const calculatedBaseHeight = baseRes;
+
+            // Ustawienie faktycznego rozmiaru płótna po przeskalowaniu HD
+            canvas.width = calculatedBaseWidth * scale;
+            canvas.height = calculatedBaseHeight * scale;
+
+            // Skalujemy kontekst graficzny, by rysować w jednostkach bazowych (np. 32x32)
+            ctx.save();
+            ctx.scale(scale, scale);
+            
+            // Włączenie pixelartowego wyglądu
+            ctx.imageSmoothingEnabled = false;
+
+            const w = calculatedBaseWidth;
+            const h = calculatedBaseHeight;
+
+            // 1. RYSOWANIE TŁA (Jeśli wybrane)
+            const shape = bgShapeSelect.value;
+            if (shape !== 'none') {
+                // Tworzenie gradientu pionowego
+                const gradient = ctx.createLinearGradient(0, 0, 0, h);
+                gradient.addColorStop(0, bgColor1.value);
+                gradient.addColorStop(1, bgColor2.value);
+                ctx.fillStyle = gradient;
+                
+                ctx.strokeStyle = borderColor.value;
+                ctx.lineWidth = Math.max(1, baseRes / 16); // Grubość ramki zależna od res
+
+                ctx.beginPath();
+                if (shape === 'ticket') {
+                    // Kształt biletu z wyciętymi rogami (pixel-style jak na zdjęciu)
+                    const cut = Math.max(2, baseRes / 8); 
+                    ctx.moveTo(cut, 0);
+                    ctx.lineTo(w - cut, 0);
+                    ctx.lineTo(w, cut);
+                    ctx.lineTo(w, h - cut);
+                    ctx.lineTo(w - cut, h);
+                    ctx.lineTo(cut, h);
+                    ctx.lineTo(0, h - cut);
+                    ctx.lineTo(0, cut);
+                    ctx.closePath();
+                } else if (shape === 'rounded') {
+                    // Zaokrąglony
+                    const r = Math.max(4, baseRes / 4);
+                    ctx.roundRect(0, 0, w, h, r);
+                } else if (shape === 'rect') {
+                    // Zwykły kwadrat / prostokąt
+                    ctx.rect(0, 0, w, h);
+                }
+                
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // 2. RYSOWANIE TEKSTU (Z zachowaniem pixel-artu)
+            ctx.font = `bold ${baseRes * 0.45}px "Courier New", Courier, monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const textX = w / 2;
+            const textY = h / 2 + (baseRes * 0.02); // Lekka korekta pionowa
+
+            // Cień tekstu (3D efekt minecraftowy)
+            ctx.fillStyle = shadowColor.value;
+            const shadowOffset = Math.max(1, baseRes / 32);
+            ctx.fillText(text, textX + shadowOffset, textY + shadowOffset);
+
+            // Główny tekst
+            ctx.fillStyle = textColor.value;
+            ctx.fillText(text, textX, textY);
+
+            ctx.restore();
         }
-    }
-    setInterval(updateT, 1000); updateT();
 
-    particlesJS("particles-js", { "particles": { "number": { "value": 35 }, "color": { "value": "#ff8c00" }, "opacity": { "value": 0.2 }, "size": { "value": 2 }, "line_linked": { "enable": true, "distance": 120, "color": "#ff8c00", "opacity": 0.1 }, "move": { "enable": true, "speed": 1 } } });
-</script>
+        // Eventy aktualizujące na żywo
+        [textInput, resolutionSelect, scaleSelect, bgShapeSelect, bgColor1, bgColor2, borderColor, textColor, shadowColor].forEach(element => {
+            element.addEventListener('input', draw);
+            element.addEventListener('change', draw);
+        });
+
+        // Pobieranie gotowego pliku
+        downloadBtn.addEventListener('click', () => {
+            const image = canvas.toDataURL("image/png");
+            const link = document.createElement('a');
+            
+            // Format nazwy pliku kompatybilny z configami tekstur
+            const cleanName = textInput.value.toLowerCase().replace(/[^a-z0-9]/g, '_') || 'texture';
+            link.download = `custom_font_${cleanName}.png`;
+            
+            link.href = image;
+            link.click();
+        });
+
+        // Pierwsze uruchomienie generowania
+        window.onload = draw;
+    </script>
 </body>
 </html>
